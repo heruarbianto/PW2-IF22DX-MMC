@@ -12,16 +12,12 @@ export default function MainLayout({
         
         {/* Area Header */}
         <header className="text-header">
-         <Link href={"/"}>Home</Link> |
-          <a href={"/profil"}>Profil</a> |
-          <Link href={"/profil/dosen"}>Dosen</Link> |
-          Visi |
-          Visi 1  |
+         <h1>INI NAVBAR</h1>
           
         </header>
 
         {/* Area content */}
-        <section id="text-content">{children}</section>
+        {children}
 
         {/* Area footer */}
         {/* <footer>Bagian Footer</footer> */}
