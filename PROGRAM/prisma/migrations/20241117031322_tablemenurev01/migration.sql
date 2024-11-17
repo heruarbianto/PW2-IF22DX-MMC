@@ -5,6 +5,7 @@ CREATE TABLE `tb_menu` (
     `deskripsi` TEXT NOT NULL,
     `harga` DECIMAL(10, 2) NOT NULL,
     `kategori` ENUM('MAKANAN', 'MINUMAN') NOT NULL DEFAULT 'MAKANAN',
+    `gambar_menu` VARCHAR(100) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
