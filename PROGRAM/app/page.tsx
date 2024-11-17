@@ -1,8 +1,15 @@
+import { PrismaClient } from "@prisma/client";
 import React from "react";
-export default function MainPage() {
+
+const prisma = new PrismaClient();
+export default async function MainPage() {
+  // Membuat Variabel menu
+  const menu = await prisma.tb_menu.findMany({});
   return (
      <div>
-      INI KONTEN PRODUK
+      {menu?.map((datamenu: any, index: number)=>(
+        <div key={index}>{datamenu.id} {datamenu.nama} {datamenu.deskripsi} {datamenu.harga.toString()} {datamenu.kategori} {datamenu.gambar_menu}  </div>
+      ))}
     </div>
   );
 }
