@@ -1,1 +1,5 @@
-sebelum menjalankan project harap melakukan instalasi depedensi pak
+sebelum menjalankan project harap melakukan instalasi depedensi (pustaka/paket) terlebih dahulu
+dnegan menjalankan perintah "npm install" di terminal dalam folder PROGRAM
+
+karena depedensi seperti node_modul tidak di upload ke github untuk mengurangi pemborosan memori
+Terimakasih

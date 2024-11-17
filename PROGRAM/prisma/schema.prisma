@@ -12,3 +12,17 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+// Buat Enum Kategori
+enum kategori {
+  MAKANAN
+  MINUMAN
+}
+model tb_menu {
+  id Int @id @default(autoincrement())
+  nama String @db.VarChar(100)
+  deskripsi String @db.Text
+  harga Decimal @db.Decimal(10,2)
+  kategori kategori @default(MAKANAN)
+  image_url String @db.VarChar(100)
+}
