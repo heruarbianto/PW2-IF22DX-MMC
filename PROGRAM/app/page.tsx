@@ -8,14 +8,11 @@ import { getAllMenu } from "./models/modelMenu";
 export default function MainPage() {
   //  Buat Hook useState
   const [getMenu, setMenu] = useState({})
-
   // Buat Fungsi untuk respon getAllMenu
-  async function fetchAllMenu() {
-    
+  async function fetchAllMenu() { 
     // Isi nilai setValue
     setMenu(await getAllMenu())
   }
-
     // BBUat Hook useEffect
     useEffect(() => {
       // Panggil fungsi fetchData
@@ -23,7 +20,7 @@ export default function MainPage() {
     }, [])
   return (
     <div>
-        <section className="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+        <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
         {Object.values(getMenu)?.map((datamenu: any, index: number) => (
           <div key={index} className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
         

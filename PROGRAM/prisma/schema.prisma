@@ -22,7 +22,7 @@ model tb_menu {
   id Int @id @default(autoincrement())
   nama String @db.VarChar(100)
   deskripsi String @db.Text
-  harga Decimal @db.Decimal(10,2)
+  harga Int @db.Int()
   kategori kategori @default(MAKANAN)
   gambar_menu String @db.VarChar(100)
 }
