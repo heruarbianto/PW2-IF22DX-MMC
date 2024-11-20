@@ -14,3 +14,10 @@ export const menuDetail = async()=>{
         harga: detail?.harga.toNumber(),
     }
   }
+
+  // fungsi untuk menampilkan semua menu
+export const getAllMenu = async()=>{
+    // Membuat Variabel menu
+  const menu = await prisma.tb_menu.findMany({});
+  return menu;
+  }
