@@ -19,18 +19,19 @@ export default function MainPage() {
       fetchAllMenu();
     }, [])
   return (
-    <div>
-        <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+    <div className="px-10">
+        <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
         {Object.values(getMenu)?.map((datamenu: any, index: number) => (
-          <div key={index} className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
+          <div key={index} className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
         
           <img src={`${datamenu.gambar_menu}`}
-                  alt="Menu" className="h-80 w-72 object-cover rounded-t-xl" />
-          <div className="px-4 py-3 w-72">
+                  alt="Menu" className="h-40 w-40 object-cover rounded-t-xl" />
+          <div className="px-4 py-3 w-40">
               <span className="text-gray-400 mr-3 uppercase text-xs">{datamenu.kategori}</span>
               <p className="text-lg font-bold text-black truncate block capitalize">{datamenu.nama}</p>
               <div className="flex items-center">
-                  <p className="text-lg font-semibold text-black cursor-auto my-3">Rp. {datamenu.harga.toString()}</p>
+              <p className="text-xs">Rp. </p>
+                  <p className="text-lg font-normal text-black cursor-auto my-3"> {datamenu.harga.toString()}</p>
                   <FontAwesomeIcon icon={faCartPlus} width={30} height={30} className='ml-auto'>
                   </FontAwesomeIcon>
               </div>

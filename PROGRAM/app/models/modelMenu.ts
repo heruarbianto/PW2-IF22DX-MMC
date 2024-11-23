@@ -9,10 +9,7 @@ export const menuDetail = async()=>{
         id: 2,
       },
     })
-    return {
-        ...detail,
-        harga: detail?.harga.toNumber(),
-    }
+    return detail;
   }
 
   // fungsi untuk menampilkan semua menu
