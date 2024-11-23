@@ -3,10 +3,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // fungsi untuk detail mennu
-export const menuDetail = async () => {
+export const menuDetail = async (idParameter: number) => {
   const detail = await prisma.tb_menu.findUnique({
     where: {
-      id: 2,
+      id: idParameter,
     },
   });
   return detail;

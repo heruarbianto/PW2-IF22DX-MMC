@@ -1,13 +1,29 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { filterCategory, getAllMenu } from "./models/modelMenu";
+import DetailMenu from "./Modal/detailMenu";
 
 export default function MainPage() {
   //  Buat Hook useState
   const [getMenu, setMenu] = useState({});
   const [activeTab, setActiveTab] = useState("All"); // Default active tab
+  const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
+  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
+
+  const openModal = (id:number) => {
+    setBukaMOdal(true);
+    setSelectedMenuId(id);
+  }
+  const closeModal = () => setBukaMOdal(false);
+   // Fungsi untuk menangani klik di luar modal (untuk menutup modal)
+   const handleOverlayClick = (e: React.MouseEvent) => {
+    // Cek apakah klik terjadi di luar konten modal
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab); // Set the clicked tab as active
@@ -69,7 +85,7 @@ export default function MainPage() {
 
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
         {Object.values(getMenu)?.map((datamenu: any, index: number) => (
-          <div
+          <div onClick={() =>{openModal(datamenu.id)}}
             key={index}
             className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
           >
@@ -102,6 +118,26 @@ export default function MainPage() {
           </div>
         ))}
       </section>
+
+
+
+
+
+       {/* Membuat modal komponen */}
+       {isBukaModal && selectedMenuId !== null && (
+        <div onClick={handleOverlayClick} className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
+          <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6 relative">
+            <div className="flex justify-end">
+              <FontAwesomeIcon
+                icon={faXmark}
+                className="ml-auto mb-2"
+                onClick={closeModal}
+              ></FontAwesomeIcon>
+            </div>
+            <DetailMenu id={selectedMenuId}></DetailMenu>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
