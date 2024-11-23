@@ -44,7 +44,7 @@ export default function detailMenu({id}: MenuDetailProps) {
     fetchDetail();
   }, [id])
   return (  
-            <div className="tracking-wide mx-auto">
+            <div className="tracking-wide mx-auto font-sans">
               <div className="bg-white md:min-h-[600px] grid items-start grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="h-full">
                   <div className="p-4 relative h-full flex items-center justify-center">

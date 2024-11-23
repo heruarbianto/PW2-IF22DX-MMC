@@ -8,7 +8,7 @@ export default function MainLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="font-sans">
         
         {/* Area Header */}
         <header className="text-header">
