@@ -56,7 +56,7 @@ export default function detailMenu({id}: MenuDetailProps) {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-yellow-600 via-yellow-600 to-yellow-700 py-6 px-8 h-full">
+                <div className="bg-gradient-to-r from-sky-600 via-sky-600 to-sky-700 py-6 px-8 h-full">
                   <div>
                     <h2 className="text-3xl font-semibold text-white">
                       {/* {Object.values(getDetail)?.map((detmenu: any, index: number)=>(
