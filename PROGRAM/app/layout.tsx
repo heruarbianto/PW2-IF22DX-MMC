@@ -11,8 +11,8 @@ export default function MainLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-
+      <body className="font-sans">
+        
         {/* Area Header */}
         <header>
           <nav className="bg-white dark:bg-gray-800 antialiased">

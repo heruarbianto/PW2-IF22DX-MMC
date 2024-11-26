@@ -1,10 +1,10 @@
 import React from 'react'
-
+import TambahMenu from '../Modal/tambahMenu'
 export default function ProfilePage() {
   return (
     <div>
       Halaman Profil
-      <footer>Bagian Footer</footer>
+      <TambahMenu></TambahMenu>
     </div>
   )
 }
