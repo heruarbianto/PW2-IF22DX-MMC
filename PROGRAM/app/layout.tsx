@@ -11,6 +11,7 @@ export default function MainLayout({
 }>) {
   return (
     <html lang="en">
+
       <body className="font-sans">
         
         {/* Area Header */}

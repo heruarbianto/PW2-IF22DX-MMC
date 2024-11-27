@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { filterCategory, getAllMenu } from "./models/modelMenu";
+import { filterCategoryReady, filterCategorySold, getAllMenuReady, getAllMenuSold } from "./models/modelMenu";
 import DetailMenu from "./Modal/detailMenu";
 
 export default function MainPage() {
   //  Buat Hook useState
-  const [getMenu, setMenu] = useState({});
+  const [getMenuReady, setMenuReady] = useState({});
+  const [getMenuSold, setMenuSold] = useState({});
   const [activeTab, setActiveTab] = useState("All"); // Default active tab
   const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
@@ -32,11 +33,14 @@ export default function MainPage() {
   async function fetchAllMenu() {
     // Isi nilai setValue
     if(activeTab==="All"){
-      setMenu(await getAllMenu());
+      setMenuReady(await getAllMenuReady());
+      setMenuSold(await getAllMenuSold());
     } else if(activeTab==="Makanan"){
-      setMenu(await filterCategory("Makanan"))
+      setMenuReady(await filterCategoryReady("Makanan"))
+      setMenuSold(await filterCategorySold("Makanan"))
     } else{
-      setMenu(await filterCategory("Minuman"))
+      setMenuReady(await filterCategoryReady("Minuman"))
+      setMenuSold(await filterCategorySold("Minuman"))
     }
   }
   // BBUat Hook useEffect
@@ -84,7 +88,7 @@ export default function MainPage() {
       </div>
 
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
-        {Object.values(getMenu)?.map((datamenu: any, index: number) => (
+        {Object.values(getMenuReady)?.map((datamenu: any, index: number) => (
           <div onClick={() =>{openModal(datamenu.id)}}
             key={index}
             className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
@@ -113,6 +117,34 @@ export default function MainPage() {
                   height={30}
                   className="ml-auto"
                 ></FontAwesomeIcon>
+              </div>
+            </div>
+          </div>
+        ))}
+        {Object.values(getMenuSold)?.map((datamenusold: any, index: number) => (
+          <div
+            key={index}
+            className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
+          >
+            <img
+              src={`${datamenusold.gambar_menu}`}
+              alt="Menu"
+              className="h-40 w-40 object-cover rounded-t-xl grayscale"
+            />
+            <div className="px-4 py-3 w-40">
+              <span className="text-gray-400 mr-3 uppercase text-xs">
+                {datamenusold.kategori}
+              </span>
+              <p className="text-lg font-bold text-black truncate block capitalize">
+                {datamenusold.nama}
+              </p>
+              <div className="flex items-center">
+                <p className="text-xs">Rp. </p>
+                <p className="text-lg font-normal text-black cursor-auto my-3">
+                  {" "}
+                  {datamenusold.harga.toString()}
+                </p>
+                <p className="text-xs ml-auto">{datamenusold.ketersediaan}</p>
               </div>
             </div>
           </div>

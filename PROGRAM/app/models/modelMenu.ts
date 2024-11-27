@@ -22,16 +22,69 @@ export const getAllMenu = async () => {
   const menu = await prisma.tb_menu.findMany({});
   return menu;
 };
-// buat fungsi untuk filter menu berdasarkan kategori
-export const filterCategory = async (category: string) => {
+
+// fungsi untuk menampilkan semua menu user
+export const getAllMenuReady = async () => {
+  // Membuat Variabel menu
+  const menu = await prisma.tb_menu.findMany({
+    where: {
+      ketersediaan:'READY',
+    }
+  });
+  return menu;
+};
+// fungsi untuk menampilkan semua menu user
+export const getAllMenuSold = async () => {
+  // Membuat Variabel menu
+  const menu = await prisma.tb_menu.findMany({
+    where: {
+      ketersediaan: 'SOLDOUT',
+    }
+  });
+  return menu;
+};
+// buat fungsi untuk filter menu berdasarkan kategori untuk user ready
+export const filterCategoryReady = async (category: string) => {
   const tempCategory = category.toUpperCase();
   const filterMenu = await prisma.tb_menu.findMany({
     where: {
       kategori: tempCategory as "MAKANAN" | "MINUMAN",
+      ketersediaan: 'READY'
     },
   });
   
   return filterMenu;
+};
+// buat fungsi untuk filter menu berdasarkan kategori untuk user Sold
+export const filterCategorySold = async (category: string) => {
+  const tempCategory = category.toUpperCase();
+  const filterMenu = await prisma.tb_menu.findMany({
+    where: {
+      kategori: tempCategory as "MAKANAN" | "MINUMAN",
+      ketersediaan: 'SOLDOUT'
+    },
+  });
+  
+  return filterMenu;
+};
+// buat fungsi untuk filter menu berdasarkan kategori
+export const filterCategory = async (category: string) => {
+  const tempCategory = category.toUpperCase();
+  if (tempCategory!=="MAKANAN" && tempCategory!=="MINUMAN"){
+     const filtermenu = await prisma.tb_menu.findMany({
+      where: {
+        ketersediaan: 'SOLDOUT',
+      },
+    });  
+    return filtermenu;
+  }else{
+    const filtermenu = await prisma.tb_menu.findMany({
+      where: {
+        kategori: tempCategory as "MAKANAN" | "MINUMAN",
+      },
+    });
+    return filtermenu;
+  }
 };
 
 const saveFile = async (base64Data: string, fileName: string): Promise<string> => {
@@ -61,18 +114,19 @@ export const createMenu = async(
   hargaParam:number,
   base64File: string,
   gambarParam:string,
-  deskripsiParam:string)=>{
+  deskripsiParam:string,
+  ketersediaanParam:string)=>{
 
       // Simpan file terlebih dahulu
   const gambarPath = await saveFile(base64File, gambarParam)
-  const setMenu = await prisma.tb_menu.create({
+  await prisma.tb_menu.create({
     data: {
       nama: namaParam,
       kategori: kategoriParam as "MAKANAN" | "MINUMAN",
       harga: hargaParam,
       gambar_menu: gambarPath,
       deskripsi: deskripsiParam,
+      ketersediaan: ketersediaanParam as "READY" | "SOLDOUT",
     },
   })
-  return setMenu;
 }

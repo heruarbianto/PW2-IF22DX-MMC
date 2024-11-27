@@ -18,11 +18,16 @@ enum kategori {
   MAKANAN
   MINUMAN
 }
+enum ketersediaan {
+  READY
+  SOLDOUT
+}
 model tb_menu {
-  id Int @id @default(autoincrement())
+  id Int @unique @id @default(autoincrement())
   nama String @db.VarChar(100)
   deskripsi String @db.Text
   harga Int @db.Int()
   kategori kategori @default(MAKANAN)
   gambar_menu String @db.Text
+  ketersediaan ketersediaan @default(READY)
 }

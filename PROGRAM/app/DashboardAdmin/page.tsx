@@ -43,8 +43,10 @@ export default function MainPage() {
       setMenu(await getAllMenu());
     } else if (activeTab === "Makanan") {
       setMenu(await filterCategory("Makanan"));
-    } else {
+    } else if (activeTab === "Minuman"){
       setMenu(await filterCategory("Minuman"));
+    } else{
+      setMenu(await filterCategory("Soldout"));
     }
   }
   // BBUat Hook useEffect
@@ -87,6 +89,16 @@ export default function MainPage() {
             >
               Minuman
             </p>
+            <p
+              onClick={() => handleTabClick("Soldout")}
+              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
+                activeTab === "Soldout"
+                  ? "border-b-blue-600 text-blue-600 font-semibold"
+                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+              }`}
+            >
+              Stok Habis
+            </p>
           </div>
           <button onClick={openModalCreate} className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">
             <FontAwesomeIcon icon={faPlus} className="mr-2.5"></FontAwesomeIcon>
@@ -122,12 +134,9 @@ export default function MainPage() {
                   {" "}
                   {datamenu.harga.toString()}
                 </p>
-                <FontAwesomeIcon
-                  icon={faCartPlus}
-                  width={30}
-                  height={30}
-                  className="ml-auto"
-                ></FontAwesomeIcon>
+                <p className="text-xs ml-auto">
+                {datamenu.ketersediaan}
+                </p>
               </div>
             </div>
           </div>
