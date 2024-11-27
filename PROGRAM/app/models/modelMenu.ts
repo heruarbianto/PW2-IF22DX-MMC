@@ -148,7 +148,7 @@ export const createMenu = async(
 }
 
 
-
+// fungsi delete gambar lama
 const deleteFile = (filePath: string): void => {
   const fullPath = path.join(process.cwd(), 'public', filePath); // Path lengkap file
   if (fs.existsSync(fullPath)) {

@@ -105,7 +105,7 @@ export default function editMenu({ id }: MenuDetailProps) {
   
     // Reload halaman setelah data berhasil disubmit
     window.location.assign("../DashboardAdmin");
-  
+    
     // Reset form setelah submit berhasil (optional)
     setNama("");
     setKategori("MINUMAN");
@@ -115,7 +115,7 @@ export default function editMenu({ id }: MenuDetailProps) {
     setGambar(null);
   };
   
-
+    
   useEffect(() => {
     fetchDetail(); 
   }, [id]);
