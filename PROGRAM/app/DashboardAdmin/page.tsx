@@ -57,55 +57,62 @@ export default function MainPage() {
   return (
     <div className="px-10">
       <div className="max-w-screen-md mx-auto">
-        <div className="bg-white py-2 px-3 flex justify-between items-center">
-          <div className="flex flex-wrap gap-4">
-            <p
-              onClick={() => handleTabClick("All")}
-              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm transition-all duration-200 ease-in-out ${
-                activeTab === "All"
-                  ? "border-b-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-              }`}
-            >
-              All
-            </p>
-            <p
-              onClick={() => handleTabClick("Makanan")}
-              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-                activeTab === "Makanan"
-                  ? "border-b-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-              }`}
-            >
-              Makanan
-            </p>
-            <p
-              onClick={() => handleTabClick("Minuman")}
-              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-                activeTab === "Minuman"
-                  ? "border-b-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-              }`}
-            >
-              Minuman
-            </p>
-            <p
-              onClick={() => handleTabClick("Soldout")}
-              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-                activeTab === "Soldout"
-                  ? "border-b-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-              }`}
-            >
-              Stok Habis
-            </p>
-          </div>
-          <button onClick={openModalCreate} className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">
-            <FontAwesomeIcon icon={faPlus} className="mr-2.5"></FontAwesomeIcon>
-            Tambah Data
-          </button>
-        </div>
-      </div>
+  <div className="bg-white py-2 px-3 flex flex-col sm:flex-row justify-between items-center">
+    {/* Filter Tabs */}
+    <div className="flex flex-nowrap gap-4 mb-4 sm:mb-0 sm:flex-row overflow-x-auto whitespace-nowrap w-full">
+      <p
+        onClick={() => handleTabClick("All")}
+        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm transition-all duration-200 ease-in-out ${
+          activeTab === "All"
+            ? "border-b-blue-600 text-blue-600 font-semibold"
+            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+        }`}
+      >
+        All
+      </p>
+      <p
+        onClick={() => handleTabClick("Makanan")}
+        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
+          activeTab === "Makanan"
+            ? "border-b-blue-600 text-blue-600 font-semibold"
+            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+        }`}
+      >
+        Makanan
+      </p>
+      <p
+        onClick={() => handleTabClick("Minuman")}
+        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
+          activeTab === "Minuman"
+            ? "border-b-blue-600 text-blue-600 font-semibold"
+            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+        }`}
+      >
+        Minuman
+      </p>
+      <p
+        onClick={() => handleTabClick("Soldout")}
+        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
+          activeTab === "Soldout"
+            ? "border-b-blue-600 text-blue-600 font-semibold"
+            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+        }`}
+      >
+        Stok Habis
+      </p>
+    </div>
+
+    {/* Tambah Data Button */}
+    <button
+      onClick={openModalCreate}
+      className="bg-blue-600 text-white w-52 px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+    >
+      <FontAwesomeIcon icon={faPlus} className="mr-2.5" />
+      Tambah Data
+    </button>
+  </div>
+</div>
+
 
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
         {Object.values(getMenu)?.map((datamenu: any, index: number) => (
