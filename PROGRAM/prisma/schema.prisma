@@ -31,3 +31,13 @@ model tb_menu {
   gambar_menu String @db.Text
   ketersediaan ketersediaan @default(READY)
 }
+
+model tb_user{
+  id Int @unique @id @default(autoincrement())
+  namaLengkap String @db.VarChar(100)
+  username String @db.Char(22)
+  noHp String @db.VarChar(20)
+  email String @db.VarChar(50)
+  alamat String @db.Text
+  password String @db.VarChar(50)
+}
