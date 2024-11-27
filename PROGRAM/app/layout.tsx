@@ -1,14 +1,20 @@
+"use client"
 import './globals.css'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { usePathname} from 'next/navigation';
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+   // Cek apakah halaman saat ini adalah halaman login
+  const isLoginPage = pathname === '/Login'
+
   return (
     <html lang="en">
 
@@ -16,6 +22,8 @@ export default function MainLayout({
         
         {/* Area Header */}
         <header>
+           {/* Navbar hanya tampil jika showNavbar adalah true */}
+         {!isLoginPage && 
           <nav className="bg-white dark:bg-gray-800 antialiased">
             <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
               <div className="flex items-center justify-between">
@@ -25,9 +33,9 @@ export default function MainLayout({
                     <a href="#" title="">
                       <img
                         className="block w-auto h-8"
-                        src="/Tuku.yo Logo.png"
+                        src="/Tukuyo-Logo.png"
                         alt=""
-                      />
+                        />
 
                     </a>
                   </div>
@@ -54,7 +62,7 @@ export default function MainLayout({
                     <button
                       type="submit"
                       className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
+                      >
                       Search
                     </button>
                   </div>
@@ -67,7 +75,7 @@ export default function MainLayout({
                     id="myCartDropdownButton1"
                     type="button"
                     className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-blue-800 dark:text-blue-200"
-                  >
+                    >
                     <span className="sr-only">Cart</span>
 
                     <FontAwesomeIcon icon={faCartShopping} />
@@ -90,6 +98,7 @@ export default function MainLayout({
               </div>
             </div>
           </nav>
+                  }
 
         </header>
 
