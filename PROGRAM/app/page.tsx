@@ -89,7 +89,7 @@ export default function MainPage() {
 
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
         {Object.values(getMenuReady)?.map((datamenu: any, index: number) => (
-          <div onClick={() =>{openModal(datamenu.id)}}
+          <div 
             key={index}
             className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
           >
@@ -97,6 +97,7 @@ export default function MainPage() {
               src={`${datamenu.gambar_menu}`}
               alt="Menu"
               className="h-40 w-40 object-cover rounded-t-xl"
+              onClick={() =>{openModal(datamenu.id)}}
             />
             <div className="px-4 py-3 w-40">
               <span className="text-gray-400 mr-3 uppercase text-xs">
