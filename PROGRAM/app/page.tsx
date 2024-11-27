@@ -139,12 +139,9 @@ export default function MainPage() {
                 {datamenusold.nama}
               </p>
               <div className="flex items-center">
-                <p className="text-xs">Rp. </p>
-                <p className="text-lg font-normal text-black cursor-auto my-3">
-                  {" "}
-                  {datamenusold.harga.toString()}
+                <p className="text-xs font-normal text-black cursor-auto my-3">
+                  {datamenusold.ketersediaan}
                 </p>
-                <p className="text-xs ml-auto">{datamenusold.ketersediaan}</p>
               </div>
             </div>
           </div>
