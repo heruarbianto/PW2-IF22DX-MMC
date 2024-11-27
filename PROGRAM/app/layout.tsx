@@ -1,11 +1,13 @@
-"use client"
-import './globals.css'
+"use client";
+import "./globals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { usePathname } from 'next/navigation';
+
+import { usePathname } from "next/navigation";
+
 export default function MainLayout({
   children,
 }: Readonly<{
@@ -13,17 +15,25 @@ export default function MainLayout({
 }>) {
   const pathname = usePathname();
   // Cek apakah halaman saat ini adalah halaman login
-  const isLoginPage = pathname === '/Login'
+  const isLoginPage = pathname === "/Login";
 
   return (
     <html lang="en">
-
-      <body className="font-sans">
-
+      <body
+        className="font-sans max-h-[400px] overflow-y-auto
+  [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+      >
         {/* Area Header */}
         <header>
           {/* Navbar hanya tampil jika showNavbar adalah true */}
-          {!isLoginPage &&
+          {!isLoginPage && (
+
             <nav className="bg-white dark:bg-gray-800 antialiased">
               <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
                 <div className="flex items-center justify-between">
@@ -36,7 +46,6 @@ export default function MainLayout({
                           src="/Tukuyo-Logo.png"
                           alt=""
                         />
-
                       </a>
                     </div>
                   </div>
@@ -99,7 +108,7 @@ export default function MainLayout({
               </div>
             </nav>
           }
-
+          )}
         </header>
 
         {/* Area content */}

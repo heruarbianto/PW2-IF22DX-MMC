@@ -1,5 +1,5 @@
 "use server";
-import { PrismaClient, kategori } from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 import fs from 'fs';
 import path from 'path';
 
@@ -16,12 +16,16 @@ export const menuDetail = async (idParameter: number) => {
   return detail;
 };
 
+
+
 // fungsi untuk menampilkan semua menu
 export const getAllMenu = async () => {
   // Membuat Variabel menu
   const menu = await prisma.tb_menu.findMany({});
   return menu;
 };
+
+
 
 // fungsi untuk menampilkan semua menu user
 export const getAllMenuReady = async () => {
@@ -33,6 +37,9 @@ export const getAllMenuReady = async () => {
   });
   return menu;
 };
+
+
+
 // fungsi untuk menampilkan semua menu user
 export const getAllMenuSold = async () => {
   // Membuat Variabel menu
@@ -43,6 +50,9 @@ export const getAllMenuSold = async () => {
   });
   return menu;
 };
+
+
+
 // buat fungsi untuk filter menu berdasarkan kategori untuk user ready
 export const filterCategoryReady = async (category: string) => {
   const tempCategory = category.toUpperCase();
@@ -55,6 +65,10 @@ export const filterCategoryReady = async (category: string) => {
   
   return filterMenu;
 };
+
+
+
+
 // buat fungsi untuk filter menu berdasarkan kategori untuk user Sold
 export const filterCategorySold = async (category: string) => {
   const tempCategory = category.toUpperCase();
@@ -67,6 +81,10 @@ export const filterCategorySold = async (category: string) => {
   
   return filterMenu;
 };
+
+
+
+
 // buat fungsi untuk filter menu berdasarkan kategori
 export const filterCategory = async (category: string) => {
   const tempCategory = category.toUpperCase();
@@ -89,12 +107,10 @@ export const filterCategory = async (category: string) => {
 
 const saveFile = async (base64Data: string, fileName: string): Promise<string> => {
   const uploadDir = path.join(process.cwd(), 'public/imageMenu'); // Direktori penyimpanan file
-
   // Pastikan folder target ada atau buat jika belum ada
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
-
   const filePath = path.join(uploadDir, fileName);
   const buffer = Buffer.from(base64Data, 'base64')
   // Ubah Buffer ke Uint8Array agar kompatibel
@@ -130,3 +146,52 @@ export const createMenu = async(
     },
   })
 }
+
+
+// fungsi delete gambar lama
+const deleteFile = (filePath: string): void => {
+  const fullPath = path.join(process.cwd(), 'public', filePath); // Path lengkap file
+  if (fs.existsSync(fullPath)) {
+    fs.unlinkSync(fullPath); // Hapus file lama jika ada
+  }
+};
+
+export const updateMenu = async (
+  id: number,
+  namaParam: string,
+  kategoriParam: string,
+  hargaParam: number,
+  base64File: string | null, // Bisa null jika tidak mengganti gambar
+  gambarParam: string | null, // Nama file baru jika mengganti gambar
+  deskripsiParam: string,
+  ketersediaanParam: string
+) => {
+  const existingMenu = await prisma.tb_menu.findUnique({ where: { id } });
+
+  if (!existingMenu) {
+    throw new Error('Menu not found'); // Error jika data tidak ditemukan
+  }
+
+  let newGambarPath = existingMenu.gambar_menu; // Default tetap gambar lama
+
+  if (base64File && gambarParam) {
+    // Hapus gambar lama jika ada gambar baru
+    deleteFile(existingMenu.gambar_menu);
+
+    // Simpan gambar baru
+    newGambarPath = await saveFile(base64File, gambarParam);
+  }
+
+  // Update data di database
+  await prisma.tb_menu.update({
+    where: { id },
+    data: {
+      nama: namaParam,
+      kategori: kategoriParam as 'MAKANAN' | 'MINUMAN',
+      harga: hargaParam,
+      gambar_menu: newGambarPath,
+      deskripsi: deskripsiParam,
+      ketersediaan: ketersediaanParam as 'READY' | 'SOLDOUT',
+    },
+  });
+};
