@@ -5,7 +5,9 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+
 import { usePathname } from "next/navigation";
+
 export default function MainLayout({
   children,
 }: Readonly<{
@@ -31,6 +33,7 @@ export default function MainLayout({
         <header>
           {/* Navbar hanya tampil jika showNavbar adalah true */}
           {!isLoginPage && (
+
             <nav className="bg-white dark:bg-gray-800 antialiased">
               <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
                 <div className="flex items-center justify-between">
@@ -104,6 +107,7 @@ export default function MainLayout({
                 </div>
               </div>
             </nav>
+          }
           )}
         </header>
 
@@ -111,7 +115,6 @@ export default function MainLayout({
         {children}
 
         {/* Area footer */}
-        {/* <footer>Bagian Footer</footer> */}
       </body>
     </html>
   );
