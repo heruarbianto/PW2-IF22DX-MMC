@@ -22,6 +22,11 @@ enum ketersediaan {
   READY
   SOLDOUT
 }
+enum role {
+  ADMIN
+  KASIR
+  PELANGGAN
+}
 model tb_menu {
   id Int @unique @id @default(autoincrement())
   nama String @db.VarChar(100)
@@ -40,4 +45,5 @@ model tb_user{
   email String @db.VarChar(50)
   alamat String @db.Text
   password String @db.VarChar(50)
+  role role @default(PELANGGAN)
 }

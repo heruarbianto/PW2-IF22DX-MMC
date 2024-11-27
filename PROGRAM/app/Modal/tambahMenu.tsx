@@ -8,7 +8,7 @@ export default function tambahMenu() {
   const [ketersediaan, setKetersediaan] = useState("READY");
   const [harga, setHarga] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
-  const [gambar, setGambar] = useState<Partial<File>>();
+  const [gambar, setGambar] = useState<File | null>(null);
   const FILE_TYPE: Record<string, string> = {
     "image/jpeg": ".jpg",
     "image/webp": ".webp",
@@ -49,7 +49,7 @@ export default function tambahMenu() {
       } else {
         alert("Please select an image file only.");
         e.target.value = "";
-        setGambar(undefined);
+        setGambar(null);
       }
     }
   };
@@ -66,7 +66,7 @@ export default function tambahMenu() {
     setKetersediaan("READY");
     setHarga("");
     setDeskripsi("");
-    setGambar(undefined);
+    setGambar(null);
   };
 
   return (
@@ -76,7 +76,20 @@ export default function tambahMenu() {
         onSubmit={handleSubmit}
       >
         <div className="h-full">
-          <div className="p-4 relative h-full flex items-center justify-center">
+          <div className="p-4 relative h-full flex flex-col items-center justify-center gap-4">
+            {/* Display gambar atau pratinjau */}
+            {gambar ? (
+              <img
+                src={URL.createObjectURL(gambar)}
+                alt="Preview"
+                className="lg:w-4/5 w-full h-auto rounded-xl object-contain"
+              />
+            ) : (
+              <div className="w-full h-64 flex items-center justify-center bg-gray-100 rounded-xl">
+                <span className="text-gray-400">No image selected</span>
+              </div>
+            )}
+            {/* Input file untuk upload gambar */}
             <input
               type="file"
               accept="image/jpeg, image/png, image/jpg"
@@ -89,7 +102,10 @@ export default function tambahMenu() {
 
         <div className="bg-gradient-to-r from-sky-600 via-sky-600 to-sky-700 py-6 px-8 h-full">
           <div>
-            <label htmlFor="nmMenu" className="text-white"> Nama Menu</label>
+            <label htmlFor="nmMenu" className="text-white">
+              {" "}
+              Nama Menu
+            </label>
             <input
               type="text"
               id="nmMenu"
@@ -99,7 +115,10 @@ export default function tambahMenu() {
               className="w-full bg-gray-100 px-4 py-2 rounded-md text-lg font-semibold mb-2.5"
               required
             />
-            <label htmlFor="ktMenu" className="text-white"> Kategori</label>
+            <label htmlFor="ktMenu" className="text-white">
+              {" "}
+              Kategori
+            </label>
             <select
               value={kategori}
               id="ktMenu"
@@ -113,7 +132,10 @@ export default function tambahMenu() {
           </div>
 
           <div className="flex flex-wrap justify-between mt-2.5">
-          <label htmlFor="nmMenu" className="text-white"> Harga</label>
+            <label htmlFor="nmMenu" className="text-white">
+              {" "}
+              Harga
+            </label>
             <input
               type="number"
               placeholder="0"
@@ -137,7 +159,10 @@ export default function tambahMenu() {
               className="w-full bg-gray-100 px-4 py-2 rounded-md text-base mt-4 text-gray-800"
               required
             ></textarea>
-            <label htmlFor="nmMenu" className="text-white mt-4"> Ketersediaan</label>
+            <label htmlFor="nmMenu" className="text-white mt-4">
+              {" "}
+              Ketersediaan
+            </label>
             <select
               value={ketersediaan}
               onChange={(e) => setKetersediaan(e.target.value)}

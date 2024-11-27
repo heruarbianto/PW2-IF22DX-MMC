@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus, faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { filterCategory, getAllMenu } from "../models/modelMenu";
-import DetailMenu from "../Modal/detailMenu";
+import EditMenu from "../Modal/editMenu";
 import TambahMenu from "../Modal/tambahMenu";
 
 export default function MainPage() {
@@ -157,7 +157,7 @@ export default function MainPage() {
                 onClick={closeModal}
               ></FontAwesomeIcon>
             </div>
-            <DetailMenu id={selectedMenuId}></DetailMenu>
+            <EditMenu id={selectedMenuId}></EditMenu>
           </div>
         </div>
       )}
