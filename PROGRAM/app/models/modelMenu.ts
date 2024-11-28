@@ -117,7 +117,8 @@ const saveFile = async (base64Data: string, fileName: string): Promise<string> =
   const uint8ArrayBuffer = new Uint8Array(buffer);
 
   // Simpan file dengan fs
-  fs.writeFileSync(filePath, uint8ArrayBuffer); // Simpan file ke direktori
+  await fs.promises.writeFile(filePath, uint8ArrayBuffer);
+  // Simpan file ke direktori
 
   return `/imageMenu/${fileName}`; // Return path relatif untuk database
 };
