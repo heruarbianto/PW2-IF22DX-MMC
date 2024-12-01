@@ -1,7 +1,8 @@
 "use client"
 import Link from 'next/link'
 import React, { useEffect, useState} from 'react';
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -26,11 +27,10 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             
             {showAlertRegisterSukses && (
-              <div className="toast toast-center">
-                <div className="alert alert-success">
-                <span>Register Berhasil, Silahkan Login</span>
-              </div>
-              </div>
+                <div className="flex items-center p-4 mb-4 rounded-xl text-sm border border-emerald-400 bg-emerald-50 text-emerald-500" role="alert">
+                    <FontAwesomeIcon icon={faCircleCheck} className='mx-1'></FontAwesomeIcon>
+                    <span className="font-semibold mr-1">Register Berhasil</span>
+                </div>
             )}
             {/* 
              {showAlertsesi && (

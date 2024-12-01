@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartPlus, faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { filterCategory, getAllMenu } from "../models/modelMenu";
 import EditMenu from "../Modal/editMenu";
 import TambahMenu from "../Modal/tambahMenu";
