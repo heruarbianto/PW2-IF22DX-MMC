@@ -114,7 +114,9 @@ export default function MainLayout({
         {children}
 
         {/* Area footer */}
-        <footer className="bg-gray-800 text-white py-8">
+        <footer> 
+        {!isLoginPage && (
+          <div className="bg-gray-800 text-white py-8">
           <div className="container mx-auto px-4">
             {/* Flex Container untuk Tentang Kami dan Kontak */}
             <div className="flex flex-col md:flex-row justify-between gap-8">
@@ -145,6 +147,8 @@ export default function MainLayout({
               © 2024 Tuku Yo
             </div>
           </div>
+          </div>
+        )}
         </footer>
       </body>
     </html>
