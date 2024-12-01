@@ -26,12 +26,11 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             
             {showAlertRegisterSukses && (
-                <div className="flex items-center p-4 mb-4 rounded-xl text-sm border border-emerald-400 bg-emerald-50 text-emerald-500" role="alert">
-                    <svg className="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.0043 13.3333V9.16663M9.99984 6.66663H10.0073M9.99984 18.3333C5.39746 18.3333 1.6665 14.6023 1.6665 9.99996C1.6665 5.39759 5.39746 1.66663 9.99984 1.66663C14.6022 1.66663 18.3332 5.39759 18.3332 9.99996C18.3332 14.6023 14.6022 18.3333 9.99984 18.3333Z" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                    </svg>
-                    <span className="font-semibold mr-1">Register Berhasil</span>
-                </div>
+              <div className="toast toast-center">
+                <div className="alert alert-success">
+                <span>Register Berhasil, Silahkan Login</span>
+              </div>
+              </div>
             )}
             {/* 
              {showAlertsesi && (
