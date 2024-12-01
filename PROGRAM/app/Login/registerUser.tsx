@@ -60,7 +60,7 @@ export default function registerUser({
     } else if (respon === "No. Telp Telah Digunakan") {
       setErrors((prevErrors) => ({ ...prevErrors, noTelp: respon }));
     } else {
-      alert("Registrasi Berhasil!");
+      localStorage.setItem("registerSuccess", "true");
       setIsRegistered(true)
     }
     setLoading(false);
@@ -247,10 +247,7 @@ export default function registerUser({
         // Tampilkan elemen loading
         <div className="col-span-full flex justify-center items-center">
           <div className="flex space-x-4">
-            <span className="loading loading-ring loading-xs text-white"></span>
-            <span className="loading loading-ring loading-sm text-white"></span>
-            <span className="loading loading-ring loading-md text-white"></span>
-            <span className="loading loading-ring loading-lg text-white"></span>
+            <span className="loading loading-dots loading-sm text-white"></span>
           </div>
         </div>
       ) : "Register"}
