@@ -13,6 +13,7 @@ export default function MainPage() {
   const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
   const [isBukaModalCreate, setBukaMOdalCreate] = useState(false);
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
+  const [loading, setLoading] = useState(true);
 
   const openModal = (id: number) => {
     setBukaMOdal(true);
@@ -38,15 +39,20 @@ export default function MainPage() {
   };
   // Buat Fungsi untuk respon fungsi untuk tampilka data menu
   async function fetchAllMenu() {
+    setLoading(true);
     // Isi nilai setValue
     if (activeTab === "All") {
       setMenu(await getAllMenu());
+      setLoading(false);
     } else if (activeTab === "Makanan") {
       setMenu(await filterCategory("Makanan"));
+      setLoading(false);
     } else if (activeTab === "Minuman"){
       setMenu(await filterCategory("Minuman"));
+      setLoading(false);
     } else{
       setMenu(await filterCategory("Soldout"));
+      setLoading(false);
     }
   }
   // BBUat Hook useEffect
@@ -105,7 +111,7 @@ export default function MainPage() {
     {/* Tambah Data Button */}
     <button
       onClick={openModalCreate}
-      className="bg-blue-600 text-white w-52 px-4 py-2 rounded-xl hover:bg-blue-700 transition"
+      className="btn btn-outline btn-primary"
     >
       <FontAwesomeIcon icon={faPlus} className="mr-2.5" />
       Tambah Data
@@ -115,6 +121,17 @@ export default function MainPage() {
 
 
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+      {loading ? (
+        // Tampilkan elemen loading
+        <div className="col-span-full flex justify-center items-center">
+          <div className="flex space-x-4">
+            <span className="loading loading-ring loading-xs text-blue-600"></span>
+            <span className="loading loading-ring loading-sm text-blue-600"></span>
+            <span className="loading loading-ring loading-md text-blue-600"></span>
+            <span className="loading loading-ring loading-lg text-blue-600"></span>
+          </div>
+        </div>
+      ) : (<>
         {Object.values(getMenu)?.map((datamenu: any, index: number) => (
           <div
             onClick={() => {
@@ -148,6 +165,8 @@ export default function MainPage() {
             </div>
           </div>
         ))}
+        </>
+      )}
       </section>
 
       {/* Membuat modal komponen */}

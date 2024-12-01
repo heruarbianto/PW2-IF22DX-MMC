@@ -31,7 +31,7 @@ const config: Config = {
     },
   },
   daisyui: {
-    themes: ["light", "dark", "cupcake"],
+    themes: ["winter"],
   },
   plugins: [
     require('daisyui'),

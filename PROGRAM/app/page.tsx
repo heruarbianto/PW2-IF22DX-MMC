@@ -12,6 +12,7 @@ export default function MainPage() {
   const [activeTab, setActiveTab] = useState("All"); // Default active tab
   const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
+  const [loading, setLoading] = useState(true);
 
   const openModal = (id:number) => {
     setBukaMOdal(true);
@@ -31,16 +32,20 @@ export default function MainPage() {
   };
   // Buat Fungsi untuk respon fungsi untuk tampilka data menu
   async function fetchAllMenu() {
+    setLoading(true);
     // Isi nilai setValue
     if(activeTab==="All"){
       setMenuReady(await getAllMenuReady());
       setMenuSold(await getAllMenuSold());
+      setLoading(false);
     } else if(activeTab==="Makanan"){
       setMenuReady(await filterCategoryReady("Makanan"))
       setMenuSold(await filterCategorySold("Makanan"))
+      setLoading(false);
     } else{
       setMenuReady(await filterCategoryReady("Minuman"))
       setMenuSold(await filterCategorySold("Minuman"))
+      setLoading(false);
     }
   }
   // BBUat Hook useEffect
@@ -88,6 +93,17 @@ export default function MainPage() {
       </div>
 
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+      {loading ? (
+        // Tampilkan elemen loading
+        <div className="col-span-full flex justify-center items-center">
+          <div className="flex space-x-4">
+            <span className="loading loading-ring loading-xs text-blue-600"></span>
+            <span className="loading loading-ring loading-sm text-blue-600"></span>
+            <span className="loading loading-ring loading-md text-blue-600"></span>
+            <span className="loading loading-ring loading-lg text-blue-600"></span>
+          </div>
+        </div>
+      ) : (<>
         {Object.values(getMenuReady)?.map((datamenu: any, index: number) => (
           <div 
             key={index}
@@ -147,6 +163,8 @@ export default function MainPage() {
             </div>
           </div>
         ))}
+        </>
+      )}
       </section>
 
 
