@@ -14,18 +14,6 @@
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-.text-header{
-  font-size: 1.5em;
-}
-
-#text-content{
-  color: blue;
-}
 
 @layer utilities {
   .text-balance {

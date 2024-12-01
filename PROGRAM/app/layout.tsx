@@ -18,7 +18,7 @@ export default function MainLayout({
   const isLoginPage = pathname === "/Login";
 
   return (
-    <html lang="en">
+    <html lang="en" data-theme="cupcake">
       <body
         className="font-sans max-h-[400px] overflow-y-auto
   [&::-webkit-scrollbar]:w-2

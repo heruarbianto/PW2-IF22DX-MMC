@@ -57,7 +57,7 @@ export default function MainPage() {
   return (
     <div className="px-10">
       <div className="max-w-screen-md mx-auto">
-  <div className="bg-white py-2 px-3 flex flex-col sm:flex-row justify-between items-center">
+  <div className="py-2 px-3 flex flex-col sm:flex-row justify-between items-center">
     {/* Filter Tabs */}
     <div className="flex flex-nowrap gap-4 mb-4 sm:mb-0 sm:flex-row overflow-x-auto whitespace-nowrap w-full">
       <p
