@@ -34,7 +34,7 @@ export default function registerUser({
   };
 
 
-  // Fungsi untuk respon create menu
+  // Fungsi untuk respon Register Pelanggan
   const fetchsetUserRegister = async () => {
     setLoading(true);
     // Panggil fungsi untuk menyimpan Data Pelanggan

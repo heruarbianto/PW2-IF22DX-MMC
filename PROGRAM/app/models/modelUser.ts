@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -38,4 +39,25 @@ export const RegisPelanggan = async (
     });
     return "Register Telah Berhasil";
   }
+};
+
+
+export const LoginPelanggan = async (
+  usernameParam: string,
+  passwordParam: string
+) => {
+  // Cari user berdasarkan username
+  const user = await prisma.tb_user.findFirst({
+    where: { username: usernameParam },
+  });
+
+  // Validasi username dan password secara umum
+  if (!user || user.password !== passwordParam) {
+    return "Username/Password Salah";
+  }
+
+  // Jika username dan password cocok
+   // Membuat token dengan JWT
+   const token = jwt.sign({ userId: user.id, username: user.username, password: user.password }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+  return token;
 };
