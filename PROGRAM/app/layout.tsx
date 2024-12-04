@@ -15,7 +15,7 @@ export default function MainLayout({
 }>) {
   const pathname = usePathname();
   // Cek apakah halaman saat ini adalah halaman login
-  const isLoginPage = pathname === "/Login";
+  const isLoginPage = pathname == "/Login";
 
   return (
     <html lang="en" data-theme="winter">

@@ -42,7 +42,7 @@ export const RegisPelanggan = async (
 };
 
 
-export const LoginPelanggan = async (
+export const LoginUser= async (
   usernameParam: string,
   passwordParam: string
 ) => {
@@ -58,6 +58,6 @@ export const LoginPelanggan = async (
 
   // Jika username dan password cocok
    // Membuat token dengan JWT
-   const token = jwt.sign({ userId: user.id, username: user.username, password: user.password }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+   const token = jwt.sign({ userId: user.id, username: user.username, password: user.password, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
   return token;
 };

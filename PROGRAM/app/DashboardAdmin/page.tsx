@@ -5,6 +5,8 @@ import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { filterCategory, getAllMenu } from "../models/modelMenu";
 import EditMenu from "../Modal/editMenu";
 import TambahMenu from "../Modal/tambahMenu";
+// import { useRouter } from 'next/router';
+import {jwtDecode} from 'jwt-decode';
 
 export default function MainPage() {
   //  Buat Hook useState
@@ -14,6 +16,7 @@ export default function MainPage() {
   const [isBukaModalCreate, setBukaMOdalCreate] = useState(false);
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
   const [loading, setLoading] = useState(true);
+  // const router = useRouter();
 
   const openModal = (id: number) => {
     setBukaMOdal(true);
@@ -57,9 +60,27 @@ export default function MainPage() {
   }
   // BBUat Hook useEffect
   useEffect(() => {
+    const token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('authToken='))
+      ?.split('=')[1];
+
+    if (!token) {
+      // router.push('/LoginAdmin');
+      // localStorage.setItem("tokenKosong", "true");
+      return alert ("Token Kosong anjing");
+    }
+
+    const decoded: { role: string; exp: number } = jwtDecode(token);
+    const now = Math.floor(Date.now() / 1000);
+
+    if (decoded.exp < now || !['ADMIN'].includes(decoded.role)) {
+      router.push('/forbidden');
+    }
     // Panggil fungsi fetchData
     fetchAllMenu();
   }, [activeTab]);
+  // , router
   return (
     <div className="px-10">
       <div className="max-w-screen-md mx-auto">
