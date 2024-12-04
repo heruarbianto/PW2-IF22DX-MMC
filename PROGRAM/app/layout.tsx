@@ -14,8 +14,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  // Cek apakah halaman saat ini adalah halaman login
-  const isLoginPage = pathname == "/Login";
+  // Daftar halaman yang memerlukan navbar
+const pagesWithNavbar = ["/", "/DashboardAdmin"];
+
+  // Cek apakah halaman saat ini termasuk dalam daftar
+const showNavbar = pagesWithNavbar.includes(pathname);
 
   return (
     <html lang="en" data-theme="winter">
@@ -32,7 +35,7 @@ export default function MainLayout({
         {/* Area Header */}
         <header>
           {/* Navbar hanya tampil jika showNavbar adalah true */}
-          {!isLoginPage && (
+          {showNavbar && (
 
             <nav className="bg-white dark:bg-gray-800 antialiased">
               <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
@@ -115,7 +118,7 @@ export default function MainLayout({
 
         {/* Area footer */}
         <footer> 
-        {!isLoginPage && (
+        {showNavbar && (
           <div className="bg-gray-800 text-white py-8">
           <div className="container mx-auto px-4">
             {/* Flex Container untuk Tentang Kami dan Kontak */}
