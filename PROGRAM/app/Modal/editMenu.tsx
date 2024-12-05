@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { menuDetail, updateMenu } from "../models/modelMenu";
+import { menuDetail, updateMenu, deleteMenu } from "../models/modelMenu";
+import Link from "next/link";
 interface MenuDetail {
   gambar_menu: string;
   nama: string;
@@ -54,7 +55,9 @@ export default function editMenu({ id }: MenuDetailProps) {
     setHarga(datamenu.harga);
     setDeskripsi(datamenu.deskripsi);
   };
-
+   const fetchDeleteMenu = async()=>{
+      await deleteMenu(id);
+   }
   const fetchPutMenu = async () => {
     if (gambar && gambar instanceof File) {
       // Mengubah gambar menjadi Buffer
@@ -90,7 +93,11 @@ export default function editMenu({ id }: MenuDetailProps) {
       );
     }
   };
-  
+   const deleteHandler = async() =>{
+    await fetchDeleteMenu();
+    window.location.assign("../DashboardAdmin");
+
+   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Mencegah reload default form
   
@@ -209,10 +216,16 @@ export default function editMenu({ id }: MenuDetailProps) {
             <div className="flex flex-wrap gap-4 mt-8">
               <button
                 type="submit"
-                className="min-w-[200px] px-4 py-3.5 bg-gray-800 hover:bg-gray-900 text-white text-base rounded"
+                className="min-w-[100px] px-4 py-3.5 bg-gray-800 hover:bg-gray-900 text-white text-base rounded"
               >
                 Simpan Perubahan
               </button>
+              <Link href={"#"}
+                className="min-w-[100px] px-4 py-3.5 bg-red-800 hover:bg-red-900 text-white text-base rounded"
+                onClick={deleteHandler}
+              >
+                Delete Menu
+              </Link>
             </div>
           </div>
         </div>

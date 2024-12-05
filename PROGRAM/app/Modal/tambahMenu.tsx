@@ -17,25 +17,30 @@ export default function tambahMenu() {
   };
   // Fungsi untuk respon create menu
   const fetchsetMenu = async () => {
-    if (gambar && gambar instanceof File) {
-      // Mengubah gambar menjadi Buffer
-      const arrayBuffer = await gambar.arrayBuffer();
-      const fileBuffer = Buffer.from(arrayBuffer);
-      const base64File = fileBuffer.toString("base64"); // Convert Buffer to Base64 string
+    if(!nama || !kategori ||!ketersediaan||!harga||!deskripsi||!gambar){
+      localStorage.setItem("Datakosong", "true")
+    }else{
 
-      const extension = FILE_TYPE[gambar.type];
-      // Menangani nama file
-      const fileName = `${nama.split(" ").join("-")}-${Date.now()}${extension}`;
-      // Panggil fungsi untuk menyimpan menu
-      await createMenu(
-        nama,
-        kategori,
-        Number(harga),
-        base64File,
-        fileName,
-        deskripsi,
-        ketersediaan
-      );
+      if (gambar && gambar instanceof File) {
+        // Mengubah gambar menjadi Buffer
+        const arrayBuffer = await gambar.arrayBuffer();
+        const fileBuffer = Buffer.from(arrayBuffer);
+        const base64File = fileBuffer.toString("base64"); // Convert Buffer to Base64 string
+  
+        const extension = FILE_TYPE[gambar.type];
+        // Menangani nama file
+        const fileName = `${nama.split(" ").join("-")}-${Date.now()}${extension}`;
+        // Panggil fungsi untuk menyimpan menu
+        await createMenu(
+          nama,
+          kategori,
+          Number(harga),
+          base64File,
+          fileName,
+          deskripsi,
+          ketersediaan
+        );
+      }
     }
   };
 

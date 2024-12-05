@@ -1,47 +1,38 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import jwt from 'jsonwebtoken';
-import {jwtVerify, type JWTPayload} from "jose"
-
-// Role yang diizinkan untuk setiap halaman
-const routePermissions: Record<string, string[]> = {
-  '/DashboardAdmin': ['ADMIN'], // Hanya admin
-};
+import { jwtVerify } from 'jose';
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get('authToken')?.value;
-  // console.log('Auth Token:', req.cookies.get('authToken')?.value);
 
-
-  if (!token) {
- 
+  // Validasi token sebelum memverifikasi
+  if (!token || token.split('.').length !== 3) {
+    console.error('Invalid token format:', token);
     return NextResponse.redirect(new URL('/LoginAdmin', req.url));
-    // return alert("Token Kosong")
   }
 
   try {
-     // Decode dan validasi token menggunakan jose
-     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-     const { payload } = await jwtVerify(token, secret);
-     const role = (payload as { role: string }).role;
+    // Validasi token menggunakan secret key
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+    const role = (payload as { role: string }).role;
 
-
-    // Periksa role berdasarkan rute
-    const allowedRoles = routePermissions[req.nextUrl.pathname];
-    if (allowedRoles && !allowedRoles.includes(role)) {
-      // Jika role tidak diizinkan, redirect ke halaman forbidden
+    // Redirect sesuai role
+    if (role === 'ADMIN' && req.nextUrl.pathname !== '/DashboardAdmin') {
+      return NextResponse.redirect(new URL('/DashboardAdmin', req.url));
+    } else if (role === 'PELANGGAN' && req.nextUrl.pathname !== '/DashboardPelanggan/:path*') {
+      return NextResponse.redirect(new URL('/DashboardPelanggan', req.url));
+    } else if (!['ADMIN', 'PELANGGAN'].includes(role)) {
       return NextResponse.redirect(new URL('/forbidden', req.url));
     }
   } catch (error) {
-    // Token tidak valid atau expired
-    // return NextResponse.redirect(new URL('/LoginAdmin', req.url));
-    console.log("Ini Errornya "+error)
-    return;
+    console.error('Error verifying token:', error);
+    return NextResponse.redirect(new URL('/LoginAdmin', req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/DashboardAdmin', '/DashboardAdmin/:path*'] // Proteksi halaman berdasarkan role
+  matcher: ['/DashboardAdmin', '/DashboardAdmin/:path*', '/DashboardPelanggan', '/DashboardPelanggan/:path*'],
 };

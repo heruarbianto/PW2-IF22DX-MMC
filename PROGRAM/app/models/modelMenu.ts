@@ -196,3 +196,21 @@ export const updateMenu = async (
     },
   });
 };
+
+
+// Membuat Fungsi Model Delete Menu
+
+export const deleteMenu= async(idParameter: number)=>{
+  const existingMenu = await prisma.tb_menu.findUnique({ where:  {id: idParameter} });
+  if (!existingMenu) {
+    throw new Error('Menu not found'); // Error jika data tidak ditemukan
+  }
+   // Hapus gambar di penyimpanan
+   deleteFile(existingMenu.gambar_menu);
+
+  await prisma.tb_menu.deleteMany({
+    where: {
+      id: idParameter,
+    },
+  })
+}

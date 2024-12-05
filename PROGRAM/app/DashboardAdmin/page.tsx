@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faPlus, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { filterCategory, getAllMenu } from "../models/modelMenu";
 import EditMenu from "../Modal/editMenu";
 import TambahMenu from "../Modal/tambahMenu";
-// import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation";
 import {jwtDecode} from 'jwt-decode';
 
 export default function MainPage() {
@@ -16,7 +16,8 @@ export default function MainPage() {
   const [isBukaModalCreate, setBukaMOdalCreate] = useState(false);
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
   const [loading, setLoading] = useState(true);
-  // const router = useRouter();
+  const router = useRouter();
+  const [AlertDataNull, setAlertDataNull] = useState(false) //state untuk menampilkan alert jika data kosong
 
   const openModal = (id: number) => {
     setBukaMOdal(true);
@@ -66,12 +67,10 @@ export default function MainPage() {
       ?.split('=')[1];
 
     if (!token) {
-      // router.push('/LoginAdmin');
-      // localStorage.setItem("tokenKosong", "true");
-      return alert ("Token Kosong anjing");
+      router.push('/LoginAdmin');
     }
 
-    const decoded: { role: string; exp: number } = jwtDecode(token);
+    const decoded: { role: string; exp: number } = jwtDecode(token as string);
     const now = Math.floor(Date.now() / 1000);
 
     if (decoded.exp < now || !['ADMIN'].includes(decoded.role)) {
@@ -79,10 +78,25 @@ export default function MainPage() {
     }
     // Panggil fungsi fetchData
     fetchAllMenu();
-  }, [activeTab]);
-  // , router
+
+
+    if (localStorage.getItem("Datakosong") === "true") {
+      setAlertDataNull(true);
+      localStorage.removeItem("Datakosong");
+      setTimeout(() => {
+        setAlertDataNull(false);
+      }, 3000);
+    }
+  }, [activeTab, router]);
+  
   return (
     <div className="px-10">
+      {AlertDataNull&&(
+        <div role="alert" className="alert alert-error mt-2.5">
+        <FontAwesomeIcon icon={faCircleExclamation}></FontAwesomeIcon>
+        <span>Error: Data Tidak Disimpan, WAJIB DIISI SEMUA!!!</span>
+      </div>
+      )}
       <div className="max-w-screen-md mx-auto">
   <div className="py-2 px-3 flex flex-col sm:flex-row justify-between items-center">
     {/* Filter Tabs */}
