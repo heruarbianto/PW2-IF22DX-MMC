@@ -21,6 +21,8 @@ export async function middleware(req: NextRequest) {
     } else if (req.nextUrl.pathname.startsWith('/DashboardPelanggan')) {
       return NextResponse.redirect(new URL('/Login', req.url)); // Redirect ke login pelanggan
     }
+      // Jika pengguna mencoba mengakses halaman utama tetapi belum login, biarkan akses
+      return NextResponse.next();
   }
 
   try {
@@ -37,6 +39,15 @@ export async function middleware(req: NextRequest) {
 
     // Mengambil properti 'role' dari payload, diasumsikan bahwa role adalah string
     const role = (payload as { role: string }).role;
+    
+    // Cegah pengguna yang sudah login mengakses halaman utama atau halaman publik
+    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/public')) {
+      if (role === 'ADMIN') {
+        return NextResponse.redirect(new URL('/DashboardAdmin', req.url));
+      } else if (role === 'PELANGGAN') {
+        return NextResponse.redirect(new URL('/DashboardPelanggan', req.url));
+      }
+    }
 
     // Redirect ke dashboard admin jika pengguna dengan role 'ADMIN' mencoba mengakses dashboard pelanggan
     if (role === 'ADMIN' && req.nextUrl.pathname.startsWith('/DashboardPelanggan')) {
@@ -58,7 +69,7 @@ export async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname.startsWith('/DashboardAdmin')) {
       return NextResponse.redirect(new URL('/LoginAdmin', req.url)); // Redirect ke login admin
     } else if (req.nextUrl.pathname.startsWith('/DashboardPelanggan')) {
-      return NextResponse.redirect(new URL('/LoginPelanggan', req.url)); // Redirect ke login pelanggan
+      return NextResponse.redirect(new URL('/Login', req.url)); // Redirect ke login pelanggan
     }
   }
 
@@ -69,6 +80,7 @@ export async function middleware(req: NextRequest) {
 // Konfigurasi middleware untuk menentukan rute mana saja yang akan dilindungi
 export const config = {
   matcher: [
+    '/', //Halaman Utama
     '/DashboardAdmin', // Halaman dashboard admin
     '/DashboardAdmin/:path*', // Semua sub-path di bawah dashboard admin
     '/DashboardPelanggan', // Halaman dashboard pelanggan
