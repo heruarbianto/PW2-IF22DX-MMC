@@ -85,5 +85,6 @@ export const config = {
     '/DashboardAdmin/:path*', // Semua sub-path di bawah dashboard admin
     '/DashboardPelanggan', // Halaman dashboard pelanggan
     '/DashboardPelanggan/:path*', // Semua sub-path di bawah dashboard pelanggan
+    '/DashboardPelanggan/:path*',
   ],
 };
