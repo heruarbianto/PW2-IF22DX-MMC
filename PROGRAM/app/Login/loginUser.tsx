@@ -1,18 +1,29 @@
 "use client"
 import Link from 'next/link'
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState} from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { LoginUser } from '../models/modelUser';
+import { jwtVerify } from "jose"; // Import jwtVerify dari jose
+
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET as string; // Mengambil secret key dari environment variable
+
 export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
+  const [showAlertRegisterSukses, setShowAlertRegisterSukses] = useState(false);
   const [getUsername, setUsername] = useState('');
   const [getPassword, setPassword] = useState('');
-  const [showAlertRegisterSukses, setShowAlertRegisterSukses] = useState(false);
-  const [isLoginPelanggan, setIsLoginPelanggan] = useState(false); // New state for successful Login
+  const [showAlertError, setShowAlertError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  // const [ShowAlertErrorLogin, setShowAlertErrorLogin] = useState(false);
+
+  const [isLogin, setIsLogin] = useState(false); // New state for successful Login
   const [errors, setErrors] = useState("");
-    // Fungsi untuk respon Login Pelanggan
+    // Fungsi untuk respon Login User
     const fetchUserLogin = async () => {
       // Panggil fungsi untuk menyimpan Data Pelanggan
+      setLoading(true)
       const respon = await LoginUser(
         getUsername,
         getPassword
@@ -20,27 +31,98 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   
       if (respon === "Username/Password Salah") {
         setErrors(respon);
+        setShowAlertError(true);
+        setTimeout(() => {
+          setShowAlertError(false);
+        }, 3000);
       } else {
-        localStorage.setItem("LoginUserSuccess", "true");
-        setIsLoginPelanggan(true)
-        console.log(respon)
+        document.cookie = `authToken=${respon}; path=/; max-age=900; secure; SameSite=Strict;`;
+        // console.log(respon)
+        setIsLogin(true)
       }
+      setLoading(false)
     };
     const handleSubmit = async (e: React.FormEvent) => {
       // Mencegah reload
       e.preventDefault();
       await fetchUserLogin();
     };
-
-  useEffect(() => {
-    if (localStorage.getItem("registerSuccess") === "true") {
-      setShowAlertRegisterSukses(true);
-      localStorage.removeItem("registerSuccess");
-      setTimeout(() => {
-        setShowAlertRegisterSukses(false);
-      }, 3000);
-    }
-  }, []);
+    
+    useEffect(() => {
+      // Fungsi untuk mengambil token dari cookie
+      const getTokenFromCookies = () => {
+        const token = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("authToken="))
+          ?.split("=")[1];
+        return token;
+      };
+  
+      // Fungsi untuk memverifikasi token JWT menggunakan jose
+      const verifyToken = async (token: string) => {
+        try {
+          const secret = new TextEncoder().encode(JWT_SECRET); // Mengubah secret menjadi Uint8Array
+          const { payload } = await jwtVerify(token, secret); // Verifikasi token
+          return payload; // Mengembalikan payload token
+        } catch (error) {
+          console.error("Invalid or expired token:", error);
+          return null; // Token tidak valid
+        }
+      };
+  
+      const checkAuthAndRedirect = async () => {
+        const token = getTokenFromCookies();
+  
+        // Jika token ditemukan, verifikasi token
+        if (token) {
+          const payload = await verifyToken(token);
+  
+          if (payload) {
+            // Jika token valid, periksa role pengguna dan redirect
+            const role = (payload as { role: string }).role;
+  
+            if (role === "ADMIN") {
+              router.push("/DashboardAdmin");
+            } else if (role === "PELANGGAN") {
+              router.push("/DashboardPelanggan");
+            }
+          } else {
+            // Jika token kadaluarsa atau tidak valid, redirect ke halaman login
+            router.push("/Login");
+          }
+        }
+  
+        // Jika login berhasil (isLogin true), redirect sesuai role
+        if (isLogin) {
+          const token = getTokenFromCookies();
+          if (token) {
+            const payload = await verifyToken(token);
+  
+            if (payload) {
+              const role = (payload as { role: string }).role;
+              if (role === "ADMIN") {
+                window.location.assign("/DashboardAdmin");
+              } else if (role === "PELANGGAN") {
+                window.location.assign("/DashboardPelanggan");
+              }
+            }
+          }
+        }
+  
+        // Menampilkan alert sukses registrasi jika localStorage memiliki flag "registerSuccess"
+        if (localStorage.getItem("registerSuccess") === "true") {
+          setShowAlertRegisterSukses(true);
+          localStorage.removeItem("registerSuccess");
+  
+          // Sembunyikan alert setelah 3 detik
+          setTimeout(() => {
+            setShowAlertRegisterSukses(false);
+          }, 3000);
+        }
+      };
+  
+      checkAuthAndRedirect();
+    }, [isLogin, router]);
   return (
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
