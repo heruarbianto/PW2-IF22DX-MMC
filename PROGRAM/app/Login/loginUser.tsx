@@ -1,128 +1,73 @@
-"use client"
-import Link from 'next/link'
+"use client";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState} from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
-import { LoginUser } from '../models/modelUser';
-import { jwtVerify } from "jose"; // Import jwtVerify dari jose
+import { faCircleCheck, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { LoginUser } from "../models/modelUser";
+import { jwtVerify } from "jose";
 
-const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET as string; // Mengambil secret key dari environment variable
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   const [showAlertRegisterSukses, setShowAlertRegisterSukses] = useState(false);
-  const [getUsername, setUsername] = useState('');
-  const [getPassword, setPassword] = useState('');
+  const [getUsername, setUsername] = useState("");
+  const [getPassword, setPassword] = useState("");
   const [showAlertError, setShowAlertError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null); // Menyimpan role pengguna
   const router = useRouter();
-  // const [ShowAlertErrorLogin, setShowAlertErrorLogin] = useState(false);
 
-  const [isLogin, setIsLogin] = useState(false); // New state for successful Login
-  const [errors, setErrors] = useState("");
-    // Fungsi untuk respon Login User
-    const fetchUserLogin = async () => {
-      // Panggil fungsi untuk menyimpan Data Pelanggan
-      setLoading(true)
-      const respon = await LoginUser(
-        getUsername,
-        getPassword
-      );
-  
+  const fetchUserLogin = async () => {
+    setLoading(true);
+    try {
+      const respon = await LoginUser(getUsername, getPassword);
+
       if (respon === "Username/Password Salah") {
-        setErrors(respon);
         setShowAlertError(true);
-        setTimeout(() => {
-          setShowAlertError(false);
-        }, 3000);
-      } else {
-        document.cookie = `authToken=${respon}; path=/; max-age=900; secure; SameSite=Strict;`;
-        // console.log(respon)
-        setIsLogin(true)
+        setTimeout(() => setShowAlertError(false), 3000);
+        setLoading(false);
+        return;
       }
-      setLoading(false)
-    };
-    const handleSubmit = async (e: React.FormEvent) => {
-      // Mencegah reload
-      e.preventDefault();
-      await fetchUserLogin();
-    };
-    
-    useEffect(() => {
-      // Fungsi untuk mengambil token dari cookie
-      const getTokenFromCookies = () => {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("authToken="))
-          ?.split("=")[1];
-        return token;
-      };
-  
-      // Fungsi untuk memverifikasi token JWT menggunakan jose
-      const verifyToken = async (token: string) => {
-        try {
-          const secret = new TextEncoder().encode(JWT_SECRET); // Mengubah secret menjadi Uint8Array
-          const { payload } = await jwtVerify(token, secret); // Verifikasi token
-          return payload; // Mengembalikan payload token
-        } catch (error) {
-          console.error("Invalid or expired token:", error);
-          return null; // Token tidak valid
-        }
-      };
-  
-      const checkAuthAndRedirect = async () => {
-        const token = getTokenFromCookies();
-  
-        // Jika token ditemukan, verifikasi token
-        if (token) {
-          const payload = await verifyToken(token);
-  
-          if (payload) {
-            // Jika token valid, periksa role pengguna dan redirect
-            const role = (payload as { role: string }).role;
-  
-            if (role === "ADMIN") {
-              router.push("/DashboardAdmin");
-            } else if (role === "PELANGGAN") {
-              router.push("/DashboardPelanggan");
-            }
-          } else {
-            // Jika token kadaluarsa atau tidak valid, redirect ke halaman login
-            router.push("/Login");
-          }
-        }
-  
-        // Jika login berhasil (isLogin true), redirect sesuai role
-        if (isLogin) {
-          const token = getTokenFromCookies();
-          if (token) {
-            const payload = await verifyToken(token);
-  
-            if (payload) {
-              const role = (payload as { role: string }).role;
-              if (role === "ADMIN") {
-                window.location.assign("/DashboardAdmin");
-              } else if (role === "PELANGGAN") {
-                window.location.assign("/DashboardPelanggan");
-              }
-            }
-          }
-        }
-  
-        // Menampilkan alert sukses registrasi jika localStorage memiliki flag "registerSuccess"
-        if (localStorage.getItem("registerSuccess") === "true") {
-          setShowAlertRegisterSukses(true);
-          localStorage.removeItem("registerSuccess");
-  
-          // Sembunyikan alert setelah 3 detik
-          setTimeout(() => {
-            setShowAlertRegisterSukses(false);
-          }, 3000);
-        }
-      };
-  
-      checkAuthAndRedirect();
-    }, [isLogin, router]);
+      const isProduction = process.env.NODE_ENV === 'production';
+
+      // Set cookie token
+      document.cookie = `authToken=${respon}; path=/; max-age=900; SameSite=Lax`;
+
+      // Verifikasi token
+      const secret = new TextEncoder().encode('INI_ADALAH_JWT_SECRET_TUKUYO');
+      const { payload } = await jwtVerify(respon, secret);
+
+      const role = (payload as { role: string }).role;
+      // console.log("Token verified. User role:", role); // Debugging log
+      setUserRole(role);
+    } catch (error) {
+      console.error("Error during login or token verification:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetchUserLogin();
+  };
+
+  useEffect(() => {
+
+    // console.log("User role updated:", userRole); // Debugging log
+    if (userRole === "ADMIN") {
+      router.push("../DashboardAdmin");
+    } else if (userRole === "PELANGGAN") {
+      router.push("../DashboardPelanggan");
+    }
+
+    if (localStorage.getItem("registerSuccess") === "true") {
+      setShowAlertRegisterSukses(true);
+      localStorage.removeItem("registerSuccess");
+      setTimeout(() => setShowAlertRegisterSukses(false), 3000);
+    }
+  }, [userRole, router]);
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -131,51 +76,78 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
         </a>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            
             {showAlertRegisterSukses && (
-                <div className="flex items-center p-4 mb-4 rounded-xl text-sm border border-emerald-400 bg-emerald-50 text-emerald-500" role="alert">
-                    <FontAwesomeIcon icon={faCircleCheck} className='mx-1'></FontAwesomeIcon>
-                    <span className="font-semibold mr-1">Register Berhasil</span>
-                </div>
+              <div
+                className="flex items-center p-4 mb-4 rounded-xl text-sm border border-emerald-400 bg-emerald-50 text-emerald-500"
+                role="alert"
+              >
+                <FontAwesomeIcon icon={faCircleCheck} className="mx-1" />
+                <span className="font-semibold mr-1">Register Berhasil</span>
+              </div>
             )}
-            {/* 
-             {showAlertsesi && (
-                <div className="flex items-center p-4 mb-4 rounded-xl text-sm border border-red-400 bg-red-50 text-red-500" role="alert">
-                    <svg className="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.0043 13.3333V9.16663M9.99984 6.66663H10.0073M9.99984 18.3333C5.39746 18.3333 1.6665 14.6023 1.6665 9.99996C1.6665 5.39759 5.39746 1.66663 9.99984 1.66663C14.6022 1.66663 18.3332 5.39759 18.3332 9.99996C18.3332 14.6023 14.6022 18.3333 9.99984 18.3333Z" stroke="#FF0000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                    </svg>
-                    <span className="font-semibold mr-1">Sesi anda sudah habis, Silakan Login</span>
-                </div>
+            {showAlertError && (
+              <div
+                className="flex items-center p-4 mb-4 rounded-xl text-sm border border-red-400 bg-red-50 text-red-500"
+                role="alert"
+              >
+                <FontAwesomeIcon icon={faCircleExclamation} />
+                <span className="font-semibold mr-1">Username/Password Salah</span>
+              </div>
             )}
-            {showAlertDelete && (
-                <div className="flex items-center p-4 mb-4 rounded-xl text-sm border border-red-400 bg-red-50 text-red-500" role="alert">
-                    <svg className="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.0043 13.3333V9.16663M9.99984 6.66663H10.0073M9.99984 18.3333C5.39746 18.3333 1.6665 14.6023 1.6665 9.99996C1.6665 5.39759 5.39746 1.66663 9.99984 1.66663C14.6022 1.66663 18.3332 5.39759 18.3332 9.99996C18.3332 14.6023 14.6022 18.3333 9.99984 18.3333Z" stroke="#FF0000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                    </svg>
-                    <span className="font-semibold mr-1">Account Deleted</span>
-                </div>
-            )} */}
-            {/* {msg && <p className="text-sm text-red-500">{msg}</p>} Pesan error atau sukses */}
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign in to your account
             </h1>
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="Username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-                <input type="text" name="Username" id="Username" className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="udin123" required value={getUsername} onChange={(e) => setUsername(e.target.value)}/>
+                <label
+                  htmlFor="Username"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="Username"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="udin123"
+                  required
+                  value={getUsername}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
               </div>
               <div>
-                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                <input type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required value={getPassword} onChange={(e) => setPassword(e.target.value)}/>
+                <label
+                  htmlFor="password"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="••••••••"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                  value={getPassword}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
-              <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Sign in</button>
+              <button
+                type="submit"
+                className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                {loading ? "Loading..." : "Sign in"}
+              </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet? <Link href="#" onClick={toggleForm} className="font-medium text-blue-600 hover:underline dark:text-blue-500">Register</Link>
+                Don’t have an account yet?{" "}
+                <a href="#" onClick={toggleForm} className="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                  Register
+                </a>
               </p>
             </form>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

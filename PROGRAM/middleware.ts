@@ -13,7 +13,10 @@ export async function middleware(req: NextRequest) {
 
   // Jika token tidak ditemukan atau formatnya tidak valid
   if (!token || token.split('.').length !== 3) {
-    console.error('Token is missing or invalid'); // Log error untuk debugging
+    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/Login') {
+      return NextResponse.next();
+    }
+    // console.error('Token is missing or invalid'); // Log error untuk debugging
     return NextResponse.redirect(new URL('/Login', req.url)); // Redirect ke halaman login
   }
 
@@ -37,7 +40,7 @@ export async function middleware(req: NextRequest) {
     const role = (payload as { role: string }).role;
 
     // Cegah pengguna yang sudah login mengakses halaman utama atau halaman publik
-    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/public')) {
+    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/public') ||req.nextUrl.pathname === '/Login') {
       if (role === 'ADMIN') {
         return NextResponse.redirect(new URL('/DashboardAdmin', req.url)); // Redirect ke dashboard admin
       } else if (role === 'PELANGGAN') {
@@ -76,5 +79,6 @@ export const config = {
     '/DashboardPelanggan', // Halaman dashboard pelanggan
     '/DashboardPelanggan/:path*', // Semua sub-path di bawah dashboard pelanggan
     '/Modal', // Rute Modal (contoh rute tambahan)
+    '/Login',
   ],
 };

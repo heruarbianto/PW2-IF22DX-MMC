@@ -67,7 +67,7 @@ export default function MainPage() {
       ?.split('=')[1];
 
     if (!token) {
-      router.push('/LoginAdmin');
+      router.push('/Login');
     }
 
     const decoded: { role: string; exp: number } = jwtDecode(token as string);
