@@ -35,6 +35,7 @@ model tb_menu {
   kategori kategori @default(MAKANAN)
   gambar_menu String @db.Text
   ketersediaan ketersediaan @default(READY)
+  keranjang tb_keranjang[]
 }
 
 model tb_user{
@@ -46,4 +47,16 @@ model tb_user{
   alamat String @db.Text
   password String @db.VarChar(50)
   role role @default(PELANGGAN)
+  keranjang tb_keranjang[]
+}
+
+model tb_keranjang{
+  id Int @unique @id @default(autoincrement())
+  idUser Int @db.Int
+  idMenu Int @db.Int
+  quantity Int @db.Int
+  total Int @db.Int
+    // buat relasi
+  user tb_user @relation(fields: [idUser], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  menu tb_menu @relation(fields: [idMenu], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

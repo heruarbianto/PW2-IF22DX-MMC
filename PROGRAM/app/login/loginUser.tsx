@@ -31,7 +31,7 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
       const isProduction = process.env.NODE_ENV === 'production';
 
       // Set cookie token
-      document.cookie = `authToken=${respon}; path=/; max-age=900; SameSite=Lax`;
+      document.cookie = `authToken=${respon}; path=/; max-age=900; secure; SameSite=Lax`;
 
       // Verifikasi token
       const secret = new TextEncoder().encode('INI_ADALAH_JWT_SECRET_TUKUYO');
@@ -56,9 +56,9 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
 
     // console.log("User role updated:", userRole); // Debugging log
     if (userRole === "ADMIN") {
-      router.push("../DashboardAdmin");
+      router.push("../dashboardadmin");
     } else if (userRole === "PELANGGAN") {
-      router.push("../DashboardPelanggan");
+      router.push("../dashboard");
     }
 
     if (localStorage.getItem("registerSuccess") === "true") {

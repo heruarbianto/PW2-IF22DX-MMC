@@ -61,7 +61,7 @@ export default function tambahMenu() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     // Reload halaman setelah data berhasil disubmit
-    window.location.assign("../DashboardAdmin");
+    window.location.assign("../dashboardadmin");
     // Panggil fetchsetMenu untuk menyimpan data
     await fetchsetMenu();
 

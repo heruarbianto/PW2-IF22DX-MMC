@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { filterCategoryReady, filterCategorySold, getAllMenuReady, getAllMenuSold } from "./models/modelMenu";
-import DetailMenu from "./Modal/detailMenu";
+import DetailMenu from "./modal/detailMenu";
 
 export default function MainPage() {
   //  Buat Hook useState

@@ -107,7 +107,7 @@ export default function editMenu({ id }: MenuDetailProps) {
   };
    const deleteHandler = async() =>{
     await fetchDeleteMenu();
-    window.location.assign("../DashboardAdmin");
+    window.location.assign("../dashboardadmin");
 
    }
   const handleSubmit = async (e: React.FormEvent) => {
@@ -123,7 +123,7 @@ export default function editMenu({ id }: MenuDetailProps) {
     await fetchPutMenu();
   
     // Reload halaman setelah data berhasil disubmit
-    window.location.assign("../DashboardAdmin");
+    window.location.assign("../dashboardadmin");
     
     // Reset form setelah submit berhasil (optional)
     setNama("");

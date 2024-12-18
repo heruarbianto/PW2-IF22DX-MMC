@@ -13,11 +13,11 @@ export async function middleware(req: NextRequest) {
 
   // Jika token tidak ditemukan atau formatnya tidak valid
   if (!token || token.split('.').length !== 3) {
-    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/Login') {
+    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
       return NextResponse.next();
     }
-    // console.error('Token is missing or invalid'); // Log error untuk debugging
-    return NextResponse.redirect(new URL('/Login', req.url)); // Redirect ke halaman login
+    console.error('Token is missing or invalid'); // Log error untuk debugging
+    return NextResponse.redirect(new URL('/login', req.url)); // Redirect ke halaman login
   }
 
   try {
@@ -33,28 +33,33 @@ export async function middleware(req: NextRequest) {
     if (!exp || Date.now() >= exp * 1000) {
       // Jika token sudah kadaluarsa, redirect ke halaman login
       console.error('Token has expired');
-      return NextResponse.redirect(new URL('/Login', req.url));
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
     // Mengambil properti 'role' dari payload, diasumsikan bahwa role adalah string
     const role = (payload as { role: string }).role;
 
     // Cegah pengguna yang sudah login mengakses halaman utama atau halaman publik
-    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/public') ||req.nextUrl.pathname === '/Login') {
+    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/public')) {
       if (role === 'ADMIN') {
-        return NextResponse.redirect(new URL('/DashboardAdmin', req.url)); // Redirect ke dashboard admin
+        return NextResponse.redirect(new URL('/dashboardadmin', req.url)); // Redirect ke dashboard admin
       } else if (role === 'PELANGGAN') {
-        return NextResponse.redirect(new URL('/DashboardPelanggan', req.url)); // Redirect ke dashboard pelanggan
+        return NextResponse.redirect(new URL('/dashboard', req.url)); // Redirect ke dashboard pelanggan
       }
     }
-
+    if (role === 'ADMIN' && req.nextUrl.pathname === '/dashboardadmin') {
+      return NextResponse.next(); // Jangan redirect jika sudah di halaman dashboardadmin
+    }
+    if (role === 'PELANGGAN' && req.nextUrl.pathname === '/dashboard') {
+      return NextResponse.next(); // Jangan redirect jika sudah di halaman dashboard
+    }
     // Redirect ke dashboard admin jika pengguna dengan role 'ADMIN' mencoba mengakses dashboard pelanggan
-    if (role === 'ADMIN' && req.nextUrl.pathname.startsWith('/DashboardPelanggan')) {
-      return NextResponse.redirect(new URL('/DashboardAdmin', req.url));
+    if (role === 'ADMIN' && req.nextUrl.pathname.startsWith('/dashboard')||req.nextUrl.pathname.startsWith('/login')) {
+      return NextResponse.redirect(new URL('/dashboardadmin', req.url));
     }
     // Redirect ke dashboard pelanggan jika pengguna dengan role 'PELANGGAN' mencoba mengakses dashboard admin
-    else if (role === 'PELANGGAN' && req.nextUrl.pathname.startsWith('/DashboardAdmin')) {
-      return NextResponse.redirect(new URL('/DashboardPelanggan', req.url));
+    else if (role === 'PELANGGAN' && req.nextUrl.pathname.startsWith('/dashboardadmin')||req.nextUrl.pathname.startsWith('/login')) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
     }
     // Jika role tidak valid atau tidak dikenali, redirect ke halaman forbidden
     else if (!['ADMIN', 'PELANGGAN'].includes(role)) {
@@ -63,7 +68,7 @@ export async function middleware(req: NextRequest) {
   } catch (error) {
     // Jika terjadi error saat memverifikasi token, log error untuk debugging
     console.error('Error verifying token:', error);
-    return NextResponse.redirect(new URL('/Login', req.url)); // Redirect ke halaman login
+    return NextResponse.redirect(new URL('/login', req.url)); // Redirect ke halaman login
   }
 
   // Jika semua validasi lolos, lanjutkan ke halaman yang diminta
@@ -74,11 +79,11 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     '/', // Halaman utama
-    '/DashboardAdmin', // Halaman dashboard admin
-    '/DashboardAdmin/:path*', // Semua sub-path di bawah dashboard admin
-    '/DashboardPelanggan', // Halaman dashboard pelanggan
-    '/DashboardPelanggan/:path*', // Semua sub-path di bawah dashboard pelanggan
-    '/Modal', // Rute Modal (contoh rute tambahan)
-    '/Login',
+    '/dashboardadmin', // Halaman dashboard admin
+    '/dashboardadmin/:path*', // Semua sub-path di bawah dashboard admin
+    '/dashboard', // Halaman dashboard pelanggan
+    '/dashboard/:path*', // Semua sub-path di bawah dashboard pelanggan
+    '/modal', // Rute Modal (contoh rute tambahan)
+    '/login',
   ],
 };

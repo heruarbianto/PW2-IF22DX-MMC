@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faPlus, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { filterCategory, getAllMenu } from "../models/modelMenu";
-import EditMenu from "../Modal/editMenu";
-import TambahMenu from "../Modal/tambahMenu";
+import EditMenu from "../modal/editMenu";
+import TambahMenu from "../modal/tambahMenu";
 import { useRouter } from "next/navigation";
 import {jwtDecode} from 'jwt-decode';
 
@@ -67,7 +67,7 @@ export default function MainPage() {
       ?.split('=')[1];
 
     if (!token) {
-      router.push('/Login');
+      router.push('/login');
     }
 
     const decoded: { role: string; exp: number } = jwtDecode(token as string);

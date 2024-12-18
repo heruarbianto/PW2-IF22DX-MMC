@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { filterCategoryReady, filterCategorySold, getAllMenuReady, getAllMenuSold } from "../models/modelMenu";
-import DetailMenu from "../Modal/detailMenu";
+import DetailMenu from "../modal/detailMenu";
+import {jwtDecode} from 'jwt-decode';
+
+import { useRouter } from "next/navigation";
 
 export default function MainPage() {
   //  Buat Hook useState
@@ -13,7 +16,7 @@ export default function MainPage() {
   const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   const openModal = (id:number) => {
     setBukaMOdal(true);
     setSelectedMenuId(id);
@@ -50,6 +53,21 @@ export default function MainPage() {
   }
   // BBUat Hook useEffect
   useEffect(() => {
+    const token = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('authToken='))
+    ?.split('=')[1];
+
+  if (!token) {
+    router.push('/login');
+  }
+
+  const decoded: { role: string; exp: number } = jwtDecode(token as string);
+  const now = Math.floor(Date.now() / 1000);
+
+  if (decoded.exp < now || !['PELANGGAN'].includes(decoded.role)) {
+    router.push('/forbidden');
+  }
     // Panggil fungsi fetchData
     fetchAllMenu();
   }, [activeTab]);
