@@ -15,7 +15,7 @@ export default function MainLayout({
 }>) {
   const pathname = usePathname();
   // Daftar halaman yang memerlukan navbar
-const pagesWithNavbar = ["/", "/DashboardAdmin"];
+const pagesWithNavbar = ["/", "/dashboardadmin"];
 
   // Cek apakah halaman saat ini termasuk dalam daftar
 const showNavbar = pagesWithNavbar.includes(pathname);

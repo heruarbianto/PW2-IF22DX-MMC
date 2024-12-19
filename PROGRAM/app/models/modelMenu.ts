@@ -15,7 +15,7 @@ export const menuDetail = async (idParameter: number) => {
   });
   return detail;
 };
-
+ 
 
 
 // fungsi untuk menampilkan semua menu

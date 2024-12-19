@@ -39,8 +39,8 @@ export async function middleware(req: NextRequest) {
     // Mengambil properti 'role' dari payload, diasumsikan bahwa role adalah string
     const role = (payload as { role: string }).role;
 
-    // Cegah pengguna yang sudah login mengakses halaman utama atau halaman publik
-    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/public')) {
+    // Cegah pengguna yang sudah login mengakses halaman utama
+    if (req.nextUrl.pathname === '/' ) {
       if (role === 'ADMIN') {
         return NextResponse.redirect(new URL('/dashboardadmin', req.url)); // Redirect ke dashboard admin
       } else if (role === 'PELANGGAN') {
