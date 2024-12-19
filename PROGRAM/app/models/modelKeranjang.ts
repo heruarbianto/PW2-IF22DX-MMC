@@ -56,4 +56,14 @@ export const tambahUpdate = async (
     },
   });
 };
+
+ // Buat fungsi tambah plus Keranjang
+ export const deleteKeranjang = async (
+  idKeranjang: number) => {
+    await prisma.tb_keranjang.deleteMany({
+      where: {
+        id: idKeranjang,
+      },
+    })
+};
    

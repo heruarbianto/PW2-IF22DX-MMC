@@ -7,7 +7,7 @@ import {
 } from "../models/modelKeranjang";
 import keranjang from "../modal/keranjang";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 function Cart() {
   const [getIsiCart, setIsiCart] = useState({});
@@ -33,16 +33,21 @@ function Cart() {
     hargaMenu: number
   ) => {
     await tambahUpdate(idKeranjangg, quantity, hargaMenu);
-    const idKeranjang = idKeranjangg - 1;
-    setKeranjang((prevKeranjang: any) => {
-      const updatedKeranjang = { ...prevKeranjang };
-      const updatedQuantity = quantity + 1;
+    setKeranjang((prevKeranjang: any[]) => {
+      const updatedKeranjang = [...prevKeranjang];
 
-      if (updatedKeranjang[idKeranjang]) {
-        updatedKeranjang[idKeranjang] = {
-          ...updatedKeranjang[idKeranjang],
+      // Cari indeks berdasarkan ID
+      const index = updatedKeranjang.findIndex(
+        (item) => item.id === idKeranjangg
+      );
+      if (index !== -1) {
+        const updatedQuantity = quantity + 1;
+
+        // Update quantity dan total harga
+        updatedKeranjang[index] = {
+          ...updatedKeranjang[index],
           quantity: updatedQuantity,
-          total: updatedKeranjang[idKeranjang].menu.harga * updatedQuantity,
+          total: hargaMenu * updatedQuantity,
         };
       }
 
@@ -55,17 +60,36 @@ function Cart() {
     quantity: number,
     hargaMenu: number
   ) => {
-    await kurangUpdate(idKeranjangg, quantity, hargaMenu);
-    const idKeranjang = idKeranjangg - 1;
-    setKeranjang((prevKeranjang: any) => {
-      const updatedKeranjang = { ...prevKeranjang };
-      const updatedQuantity = quantity - 1;
+    // Menghitung kuantitas baru setelah dikurangi
+    const updatedQuantity = quantity - 1;
 
-      if (updatedKeranjang[idKeranjang]) {
-        updatedKeranjang[idKeranjang] = {
-          ...updatedKeranjang[idKeranjang],
+    // Jika kuantitas setelah dikurangi kurang dari 1, tampilkan modal dan hentikan proses
+    if (updatedQuantity < 1) {
+      const modal = document.getElementById("deleteMenu") as HTMLDialogElement;
+      if (modal) {
+        modal.showModal();
+      }
+      return; // Hentikan eksekusi fungsi jika quantity kurang dari 1
+    }
+
+    // Jika quantity valid, lakukan update ke database
+    const update = await kurangUpdate(idKeranjangg, quantity, hargaMenu);
+
+    // Update state keranjang
+    setKeranjang((prevKeranjang: any[]) => {
+      const updatedKeranjang = [...prevKeranjang];
+
+      // Cari indeks berdasarkan ID
+      const index = updatedKeranjang.findIndex(
+        (item) => item.id === idKeranjangg
+      );
+
+      if (index !== -1) {
+        // Update quantity dan total harga
+        updatedKeranjang[index] = {
+          ...updatedKeranjang[index],
           quantity: updatedQuantity,
-          total: updatedKeranjang[idKeranjang].menu.harga * updatedQuantity,
+          total: hargaMenu * updatedQuantity,
         };
       }
 
@@ -75,9 +99,9 @@ function Cart() {
 
   return (
     <div>
-      {Object.values(getKeranjang).map((dataKeranjang: any) => (
+      {Object.values(getKeranjang).map((dataKeranjang: any, index: number) => (
         <div
-          key={dataKeranjang.id}
+          key={index}
           className="border rounded-lg p-4 mb-4 bg-white shadow-md"
         >
           <div className="flex flex-col lg:flex-row gap-4 items-center">
@@ -149,6 +173,31 @@ function Cart() {
           </div>
         </div>
       ))}
+
+      <dialog id="deleteMenu" className="modal">
+        <div className="modal-box">
+          <div className="flex justify-end">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+          </div>
+          <div className="my-8 text-center">
+            <FontAwesomeIcon icon={faTrashAlt} className="size-20 text-red-500"></FontAwesomeIcon>
+            <h4 className="text-gray-800 text-lg font-semibold mt-4">
+              Apakah Kamu Yakin Ingin Menghapus Menu ini Dari Keranjang?
+            </h4>
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <button
+              type="button"
+              className="px-4 py-2 rounded-lg text-white text-sm tracking-wide bg-red-500 hover:bg-red-600 active:bg-red-500"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 }
