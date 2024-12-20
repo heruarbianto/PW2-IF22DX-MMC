@@ -13,6 +13,10 @@ export default function keranjang() {
   const [getIsiCart, setIsiCart] = useState({});
   const [getKeranjang, setKeranjang] = useState(getIsiCart);
   const [getidDelete, setidDelete] = useState<number>();
+  const [selectAll, setSelectAll] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+
+  // ambil data dari database
   // ambil data dari database
   const fetchKeranjangUser = async () => {
     const data = await KeranjangUser();
@@ -25,7 +29,16 @@ export default function keranjang() {
     await deleteKeranjang(getidDelete as number);
     // console.log("Data Keranjang:", data); // Debugging
     setidDelete(0);
-    location.reload()
+    location.reload();
+  };
+
+  const klikDelete = async (idKeranjang: number) => {
+    setidDelete(idKeranjang);
+
+    const modal = document.getElementById("deleteMenu") as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
   };
 
   useEffect(() => {
@@ -113,6 +126,83 @@ export default function keranjang() {
     });
   };
 
+  // Handle "Pilih Semua"
+  const handleSelectAll = () => {
+    if (
+      Object.keys(selectedItems).length === Object.keys(getKeranjang).length
+    ) {
+      // Jika semua sudah dipilih, maka batalkan pilihan
+      setSelectedItems([]);
+    } else {
+      // Jika belum semua dipilih, maka pilih semua
+      const allIds = Object.values(getKeranjang).map((item: any) => item.id);
+      setSelectedItems(allIds);
+    }
+  };
+
+  // Handle checkbox individu
+  const handleSelectItem = (id: number) => {
+    if (selectedItems.includes(id)) {
+      // Hapus dari daftar pilihan jika sudah ada
+      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+    } else {
+      // Tambahkan ke daftar pilihan jika belum ada
+      setSelectedItems([...selectedItems, id]);
+    }
+  };
+
+  // Hitung apakah semua item dipilih
+  const isAllSelected =
+    Object.keys(selectedItems).length === Object.keys(getKeranjang).length;
+
+  // Ambil total jumlah produk dan harga
+  // Hitung total jumlah produk dan harga keseluruhan berdasarkan item yang dipilih
+  const calculateTotals = () => {
+    const selectedData = Object.values(getKeranjang).filter((item: any) =>
+      selectedItems.includes(item.id)
+    );
+
+    const totalProduk = selectedData.reduce(
+      (acc: number, item: any) => acc + item.quantity,
+      0
+    );
+
+    const totalHarga = selectedData.reduce(
+      (acc: number, item: any) => acc + item.total,
+      0
+    );
+
+    return { totalProduk, totalHarga };
+  };
+  const { totalProduk, totalHarga } = calculateTotals();
+
+  const handleDeleteSelected = async () => {
+    try {
+      // Hapus semua item yang dipilih secara paralel
+      await Promise.all(selectedItems.map((id) => deleteKeranjang(id)));
+
+      // Reset pilihan dan perbarui data keranjang
+      setSelectedItems([]);
+      await fetchKeranjangUser();
+      location.reload();
+    } catch (error) {
+      console.error("Error deleting selected items:", error);
+    }
+  };
+  // fungsi untuk mengecek apakah ada item yang di seleksi
+  // jika tidak maka tombol hapus di disable
+  const isAnyItemSelected = Object.keys(selectedItems).length > 0;
+
+  // tampilkan modal sebelum ada item di pilih
+  const showModalDeleteSelected = async () => {
+    const modal = document.getElementById(
+      "deleteMenuSelected"
+    ) as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4">
       {/* Header */}
@@ -134,7 +224,12 @@ export default function keranjang() {
           >
             <div className="flex flex-col lg:flex-row gap-4 items-center">
               {/* Checkbox */}
-              <input type="checkbox" className="self-start" />
+              <input
+                type="checkbox"
+                checked={selectedItems.includes(dataKeranjang.id)}
+                onChange={() => handleSelectItem(dataKeranjang.id)}
+                className="self-start"
+              />
 
               {/* Product Image */}
               <img
@@ -195,7 +290,12 @@ export default function keranjang() {
             </div>
             <div className="flex justify-between items-center mt-5">
               {/* Hapus */}
-              <button className="text-red-500 hover:underline">Hapus</button>
+              <button
+                className="text-red-500 hover:underline"
+                onClick={() => klikDelete(dataKeranjang.id)}
+              >
+                Hapus
+              </button>
               <p className="font-bold text-gray-800">
                 Rp{dataKeranjang.total?.toLocaleString("id-ID")}
               </p>
@@ -207,13 +307,29 @@ export default function keranjang() {
       {/* Footer */}
       <div className="flex flex-col sm:flex-row justify-between items-center border-t pt-4 gap-4">
         <div className="flex items-center gap-2">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            checked={isAllSelected}
+            onChange={handleSelectAll}
+          />
           <span className="text-gray-700">Pilih Semua |</span>
-          <button className="text-red-500 hover:underline">Hapus</button>
+          <button
+            onClick={showModalDeleteSelected}
+            disabled={!isAnyItemSelected}
+            className={`${
+              isAnyItemSelected
+                ? "text-red-500 hover:underline"
+                : "text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            Hapus
+          </button>
         </div>
         <div className="text-gray-800">
-          <span>Total (2 Produk):</span>
-          <span className="ml-2 font-bold text-blue-600">Rp99.100</span>
+          <span>Total ({totalProduk} Produk):</span>
+          <span className="ml-2 font-bold text-blue-600">
+            Rp{totalHarga.toLocaleString("id-ID")}
+          </span>
         </div>
         <button className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition duration-200 w-full sm:w-auto">
           Checkout
@@ -241,6 +357,33 @@ export default function keranjang() {
           <div className="flex flex-col space-y-2">
             <button
               onClick={fetchDelete}
+              className="px-4 py-2 rounded-lg text-white text-sm tracking-wide bg-red-500 hover:bg-red-600 active:bg-red-500"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </dialog>
+      <dialog id="deleteMenuSelected" className="modal">
+        <div className="modal-box">
+          <div className="flex justify-end">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+          </div>
+          <div className="my-8 text-center">
+            <FontAwesomeIcon
+              icon={faTrashAlt}
+              className="size-20 text-red-500"
+            ></FontAwesomeIcon>
+            <h4 className="text-gray-800 text-lg font-semibold mt-4">
+              Apakah Kamu Yakin Ingin Menghapus Menu Yang Dipilih?
+            </h4>
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <button
+              onClick={handleDeleteSelected}
               className="px-4 py-2 rounded-lg text-white text-sm tracking-wide bg-red-500 hover:bg-red-600 active:bg-red-500"
             >
               Delete
