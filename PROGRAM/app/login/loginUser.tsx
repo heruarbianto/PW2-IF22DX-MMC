@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleCheck,
+  faCircleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 import { LoginUser } from "../models/modelUser";
 import { jwtVerify } from "jose";
 
@@ -28,13 +31,13 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
         setLoading(false);
         return;
       }
-      const isProduction = process.env.NODE_ENV === 'production';
+      const isProduction = process.env.NODE_ENV === "production";
 
       // Set cookie token
       document.cookie = `authToken=${respon}; path=/; max-age=900; secure; SameSite=Lax`;
 
       // Verifikasi token
-      const secret = new TextEncoder().encode('INI_ADALAH_JWT_SECRET_TUKUYO');
+      const secret = new TextEncoder().encode("INI_ADALAH_JWT_SECRET_TUKUYO");
       const { payload } = await jwtVerify(respon, secret);
 
       const role = (payload as { role: string }).role;
@@ -53,7 +56,6 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   };
 
   useEffect(() => {
-
     // console.log("User role updated:", userRole); // Debugging log
     if (userRole === "ADMIN") {
       router.push("../dashboardadmin");
@@ -71,8 +73,15 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   return (
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          <img className="w-auto h-8 mr-2" src="../Tukuyo-Logo.png" alt="logo" />
+        <a
+          href="#"
+          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        >
+          <img
+            className="w-auto h-8 mr-2"
+            src="../Tukuyo-Logo.png"
+            alt="logo"
+          />
         </a>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -91,7 +100,9 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
                 role="alert"
               >
                 <FontAwesomeIcon icon={faCircleExclamation} />
-                <span className="font-semibold mr-1">Username/Password Salah</span>
+                <span className="font-semibold mr-1">
+                  Username/Password Salah
+                </span>
               </div>
             )}
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -140,7 +151,11 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
-                <a href="#" onClick={toggleForm} className="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                <a
+                  href="#"
+                  onClick={toggleForm}
+                  className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                >
                   Register
                 </a>
               </p>

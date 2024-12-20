@@ -20,3 +20,22 @@
     text-wrap: balance;
   }
 }
+
+/* Modifikasi Modal DaisyUI */
+.modal[data-theme] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Latar belakang semi-transparan */
+  z-index: 9999; /* Pastikan di atas elemen lain */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  max-width: 500px; /* Sesuaikan lebar modal */
+  width: 90%; /* Agar responsif */
+}

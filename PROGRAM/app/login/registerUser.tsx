@@ -1,6 +1,8 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { RegisPelanggan } from "../models/modelUser";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 export default function registerUser({
   toggleForm,
@@ -15,6 +17,8 @@ export default function registerUser({
   const [getEmail, setEmail] = useState("");
   const [getPassword, setPassword] = useState("");
   const [getAlamat, setAlamat] = useState("");
+  const [showAlertError, setShowAlertError] = useState(false);
+
   const [errors, setErrors] = useState({
     username: "",
     noTelp: "",
@@ -33,35 +37,46 @@ export default function registerUser({
     setErrors((prevErrors) => ({ ...prevErrors, [field]: "" })); // Hapus kesalahan spesifik
   };
 
-
   // Fungsi untuk respon Register Pelanggan
   const fetchsetUserRegister = async () => {
     setLoading(true);
     // Panggil fungsi untuk menyimpan Data Pelanggan
-    const respon = await RegisPelanggan(
-      getNama,
-      getUsername,
-      getNoTelp,
-      getEmail,
-      getPassword,
-      getAlamat
-    );
-
-    // reset semua error sebelum menyet eror baru
-    setErrors({
-      username: "",
-      noTelp: "",
-      email: "",
-    });
-    if (respon === "Username Telah Digunakan") {
-      setErrors((prevErrors) => ({ ...prevErrors, username: respon }));
-    } else if (respon === "Email Telah Digunakan") {
-      setErrors((prevErrors) => ({ ...prevErrors, email: respon }));
-    } else if (respon === "No. Telp Telah Digunakan") {
-      setErrors((prevErrors) => ({ ...prevErrors, noTelp: respon }));
+    if (
+      !getNama ||
+      !getUsername ||
+      !getNoTelp ||
+      !getEmail ||
+      !getPassword ||
+      !getAlamat
+    ) {
+      setShowAlertError(true);
+      setTimeout(() => setShowAlertError(false), 3000);
     } else {
-      localStorage.setItem("registerSuccess", "true");
-      setIsRegistered(true)
+      const respon = await RegisPelanggan(
+        getNama,
+        getUsername,
+        getNoTelp,
+        getEmail,
+        getPassword,
+        getAlamat
+      );
+
+      // reset semua error sebelum menset eror baru
+      setErrors({
+        username: "",
+        noTelp: "",
+        email: "",
+      });
+      if (respon === "Username Telah Digunakan") {
+        setErrors((prevErrors) => ({ ...prevErrors, username: respon }));
+      } else if (respon === "Email Telah Digunakan") {
+        setErrors((prevErrors) => ({ ...prevErrors, email: respon }));
+      } else if (respon === "No. Telp Telah Digunakan") {
+        setErrors((prevErrors) => ({ ...prevErrors, noTelp: respon }));
+      } else {
+        localStorage.setItem("registerSuccess", "true");
+        setIsRegistered(true);
+      }
     }
     setLoading(false);
   };
@@ -72,7 +87,6 @@ export default function registerUser({
     // Panggil fetchsetMenu untuk menyimpan data
     await fetchsetUserRegister();
 
-    
     // Jika resgister Berhasil Arahkan ke Login
     // if (isRegistered==true) {
     //   onRegisterSuccess();
@@ -87,15 +101,16 @@ export default function registerUser({
     setErrors((prevErrors) => ({ ...prevErrors, noTelp: "" })); // Bersihkan kesalahan noTelp
   };
 
-   // useEffect untuk menangani redireksi setelah berhasil registrasi
-   useEffect(() => {
+  // useEffect untuk menangani redireksi setelah berhasil registrasi
+  useEffect(() => {
     if (isRegistered && !errors.username && !errors.noTelp && !errors.email) {
       onRegisterSuccess();
     }
   }, [isRegistered, errors, onRegisterSuccess]);
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
+      <div>
+    <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <a
           href="#"
@@ -107,11 +122,23 @@ export default function registerUser({
             alt="logo"
           />
         </a>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-3xl xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold text-center leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Register
             </h1>
+          {showAlertError && (
+              <div
+                className="flex items-center p-4 mb-4 rounded-xl text-sm border border-red-400 bg-red-50 text-red-500"
+                role="alert"
+              >
+                <FontAwesomeIcon icon={faCircleExclamation}/>
+                &nbsp;
+                <span className="font-semibold mr-1">
+                Semua Form Wajib Diisi
+                </span>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               <div>
                 <label
@@ -149,7 +176,9 @@ export default function registerUser({
                   maxLength={20}
                   required
                   value={getUsername}
-                  onChange={(e) => handleInputChange(e, "username", setUsername)}
+                  onChange={(e) =>
+                    handleInputChange(e, "username", setUsername)
+                  }
                 />
                 {errors.username && (
                   <p className="text-red-500 text-xs mt-1">{errors.username}</p>
@@ -241,16 +270,18 @@ export default function registerUser({
               <button
                 type="submit"
                 className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                disabled={loading}  // Disable button while loading
+                disabled={loading} // Disable button while loading
               >
                 {loading ? (
-        // Tampilkan elemen loading
-        <div className="col-span-full flex justify-center items-center">
-          <div className="flex space-x-4">
-            <span className="loading loading-dots loading-sm text-white"></span>
-          </div>
-        </div>
-      ) : "Register"}
+                  // Tampilkan elemen loading
+                  <div className="col-span-full flex justify-center items-center">
+                    <div className="flex space-x-4">
+                      <span className="loading loading-dots loading-sm text-white"></span>
+                    </div>
+                  </div>
+                ) : (
+                  "Register"
+                )}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
@@ -266,6 +297,8 @@ export default function registerUser({
           </div>
         </div>
       </div>
+
     </section>
+      </div>
   );
 }
