@@ -40,9 +40,12 @@ export default function keranjang() {
     location.reload();
   };
 
-  const klikDelete = async (idKeranjang: number) => {
+  const klikDelete = async (idKeranjang: number, namaMenu:string) => {
     setidDelete(idKeranjang);
-
+    const element = document.getElementById("namaMenu") as HTMLHeadingElement;
+      if (element) {
+        element.innerText = namaMenu;
+      }
     const modal = document.getElementById("deleteMenu") as HTMLDialogElement;
     if (modal) {
       modal.showModal();
@@ -300,7 +303,7 @@ export default function keranjang() {
               {/* Hapus */}
               <button
                 className="text-red-500 hover:underline"
-                onClick={() => klikDelete(dataKeranjang.id)}
+                onClick={() => klikDelete(dataKeranjang.id, dataKeranjang.menu.nama)}
               >
                 Hapus
               </button>

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { ChangeEvent } from "react";
 import { menuDetail } from "../models/modelMenu";
+import { tambahKeKeranjang } from "../models/modelKeranjang";
 
 interface MenuDetail {
   gambar_menu: string;
@@ -13,17 +14,18 @@ interface MenuDetail {
   deskripsi: string;
 }
 interface MenuDetailProps {
-  id: number; // Tambahkan properti id
+  idMenu: number; // Tambahkan properti id
+  idUser: number;
 }
 
-export default function detailMenu({id}: MenuDetailProps) {
+export default function detailMenu({idMenu,idUser}: MenuDetailProps) {
   // membuat hook useState
   const [getDetail, setDetail] = useState<Partial<MenuDetail>>({});
   const [value, setValue] = useState(1);
   // Fungsi untuk menambah nilai
   const increment = () => setValue((prevValue) => prevValue + 1);
   // Fungsi untuk mengurangi nilai, tidak kurang dari 0
-  const decrement = () => setValue((prevValue) => Math.max(prevValue - 1, 0));
+  const decrement = () => setValue((prevValue) => Math.max(prevValue - 1, 1));
   // Fungsi untuk menangani perubahan input manual
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = parseInt(e.target.value, 10);
@@ -37,12 +39,22 @@ export default function detailMenu({id}: MenuDetailProps) {
   // buat fungsi untuk respon detail menu
   const fetchDetail = async()=>{
     // isi setDetail
-    const datamenu:any = await menuDetail(id);
+    const datamenu:any = await menuDetail(idMenu);
     setDetail(datamenu)
   }
+  const fetchTambahKeKeranjang = async (
+    idUserParameter:number,
+    idMenuParameter:number,
+    quantityParameter:number,
+    hargaParameter:number) => {
+      await tambahKeKeranjang(idUserParameter, idMenuParameter,quantityParameter,hargaParameter)
+       // Reload halaman setelah data berhasil disubmit
+    window.location.assign("../dashboardadmin");
+    };
+
   useEffect(() => {
     fetchDetail();
-  }, [id])
+  }, [idMenu])
   return (  
             <div className="tracking-wide mx-auto font-sans">
               <div className="bg-white md:min-h-[600px] grid items-start grid-cols-1 md:grid-cols-2 gap-8">
@@ -119,9 +131,10 @@ export default function detailMenu({id}: MenuDetailProps) {
                   <div className="flex flex-wrap gap-4 mt-8">
                     <button
                       type="button"
+                      onClick={()=>{fetchTambahKeKeranjang(idUser,idMenu,value,getDetail.harga as number)}}
                       className="min-w-[200px] px-4 py-3.5 bg-gray-800 hover:bg-gray-900 text-white text-base rounded"
                     >
-                      Add to Cart
+                      Tambahkan ke Keranjang
                     </button>
                   </div>
                 </div>

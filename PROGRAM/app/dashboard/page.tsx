@@ -2,11 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { filterCategoryReady, filterCategorySold, getAllMenuReady, getAllMenuSold } from "../models/modelMenu";
+import {
+  filterCategoryReady,
+  filterCategorySold,
+  getAllMenuReady,
+  getAllMenuSold,
+} from "../models/modelMenu";
 import DetailMenu from "../modal/detailMenu";
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 import { useRouter } from "next/navigation";
+import { tambahKeKeranjang } from "../models/modelKeranjang";
 
 export default function dashboardPage() {
   //  Buat Hook useState
@@ -16,14 +22,16 @@ export default function dashboardPage() {
   const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
   const [loading, setLoading] = useState(true);
+  const [getIdUser, setidUser] = useState<number>(0);
+
   const router = useRouter();
-  const openModal = (id:number) => {
+  const openModal = (id: number) => {
     setBukaMOdal(true);
     setSelectedMenuId(id);
-  }
+  };
   const closeModal = () => setBukaMOdal(false);
-   // Fungsi untuk menangani klik di luar modal (untuk menutup modal)
-   const handleOverlayClick = (e: React.MouseEvent) => {
+  // Fungsi untuk menangani klik di luar modal (untuk menutup modal)
+  const handleOverlayClick = (e: React.MouseEvent) => {
     // Cek apakah klik terjadi di luar konten modal
     if (e.target === e.currentTarget) {
       closeModal();
@@ -37,37 +45,48 @@ export default function dashboardPage() {
   async function fetchAllMenu() {
     setLoading(true);
     // Isi nilai setValue
-    if(activeTab==="All"){
+    if (activeTab === "All") {
       setMenuReady(await getAllMenuReady());
       setMenuSold(await getAllMenuSold());
       setLoading(false);
-    } else if(activeTab==="Makanan"){
-      setMenuReady(await filterCategoryReady("Makanan"))
-      setMenuSold(await filterCategorySold("Makanan"))
+    } else if (activeTab === "Makanan") {
+      setMenuReady(await filterCategoryReady("Makanan"));
+      setMenuSold(await filterCategorySold("Makanan"));
       setLoading(false);
-    } else{
-      setMenuReady(await filterCategoryReady("Minuman"))
-      setMenuSold(await filterCategorySold("Minuman"))
+    } else {
+      setMenuReady(await filterCategoryReady("Minuman"));
+      setMenuSold(await filterCategorySold("Minuman"));
       setLoading(false);
     }
   }
-  // BBUat Hook useEffect
-  useEffect(() => {
-    const token = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('authToken='))
-    ?.split('=')[1];
+  
+  const fetchTambahKeKeranjang = async (
+    idUserParameter:number,
+    idMenuParameter:number,
+    quantityParameter:number,
+    hargaParameter:number) => {
+      await tambahKeKeranjang(idUserParameter, idMenuParameter,quantityParameter,hargaParameter)
+      location.reload();
+    };
+    // BBUat Hook useEffect
+    useEffect(() => {
+      const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
+      const decoded: { userId: number; role: string; exp: number } = jwtDecode(
+        token as string
+      );
+      const now = Math.floor(Date.now() / 1000);
+      setidUser(decoded.userId);
+        
+      if (!token) {
+      router.push("/login");
+    }
 
-  if (!token) {
-    router.push('/login');
-  }
-
-  const decoded: { role: string; exp: number } = jwtDecode(token as string);
-  const now = Math.floor(Date.now() / 1000);
-
-  if (decoded.exp < now || !['PELANGGAN'].includes(decoded.role)) {
-    router.push('/forbidden');
-  }
+    if (decoded.exp < now || !["PELANGGAN"].includes(decoded.role)) {
+      router.push("/forbidden");
+    }
     // Panggil fungsi fetchData
     fetchAllMenu();
   }, [activeTab]);
@@ -111,87 +130,94 @@ export default function dashboardPage() {
       </div>
 
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
-      {loading ? (
-        // Tampilkan elemen loading
-        <div className="col-span-full flex justify-center items-center">
-          <div className="flex space-x-4">
-            <span className="loading loading-ring loading-xs text-blue-600"></span>
-            <span className="loading loading-ring loading-sm text-blue-600"></span>
-            <span className="loading loading-ring loading-md text-blue-600"></span>
-            <span className="loading loading-ring loading-lg text-blue-600"></span>
-          </div>
-        </div>
-      ) : (<>
-        {Object.values(getMenuReady)?.map((datamenu: any, index: number) => (
-          <div 
-            key={index}
-            className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
-          >
-            <img
-              src={`${datamenu.gambar_menu}`}
-              alt="Menu"
-              className="h-40 w-40 object-cover rounded-t-xl"
-              onClick={() =>{openModal(datamenu.id)}}
-            />
-            <div className="px-4 py-3 w-40">
-              <span className="text-gray-400 mr-3 uppercase text-xs">
-                {datamenu.kategori}
-              </span>
-              <p className="text-lg font-bold text-black truncate block capitalize">
-                {datamenu.nama}
-              </p>
-              <div className="flex items-center">
-                <p className="text-xs">Rp. </p>
-                <p className="text-lg font-normal text-black cursor-auto my-3">
-                  {" "}
-                  {datamenu.harga.toString()}
-                </p>
-                <FontAwesomeIcon
-                  icon={faCartPlus}
-                  width={30}
-                  height={30}
-                  className="ml-auto"
-                ></FontAwesomeIcon>
-              </div>
+        {loading ? (
+          // Tampilkan elemen loading
+          <div className="col-span-full flex justify-center items-center">
+            <div className="flex space-x-4">
+              <span className="loading loading-ring loading-xs text-blue-600"></span>
+              <span className="loading loading-ring loading-sm text-blue-600"></span>
+              <span className="loading loading-ring loading-md text-blue-600"></span>
+              <span className="loading loading-ring loading-lg text-blue-600"></span>
             </div>
           </div>
-        ))}
-        {Object.values(getMenuSold)?.map((datamenusold: any, index: number) => (
-          <div
-            key={index}
-            className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
-          >
-            <img
-              src={`${datamenusold.gambar_menu}`}
-              alt="Menu"
-              className="h-40 w-40 object-cover rounded-t-xl grayscale"
-            />
-            <div className="px-4 py-3 w-40">
-              <span className="text-gray-400 mr-3 uppercase text-xs">
-                {datamenusold.kategori}
-              </span>
-              <p className="text-lg font-bold text-black truncate block capitalize">
-                {datamenusold.nama}
-              </p>
-              <div className="flex items-center">
-                <p className="text-xs font-normal text-black cursor-auto my-3">
-                  {datamenusold.ketersediaan}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-        </>
-      )}
+        ) : (
+          <>
+            {Object.values(getMenuReady)?.map(
+              (datamenu: any, index: number) => (
+                <div
+                  key={index}
+                  className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
+                >
+                  <img
+                    src={`${datamenu.gambar_menu}`}
+                    alt="Menu"
+                    className="h-40 w-40 object-cover rounded-t-xl"
+                    onClick={() => {
+                      openModal(datamenu.id);
+                    }}
+                  />
+                  <div className="px-4 py-3 w-40">
+                    <span className="text-gray-400 mr-3 uppercase text-xs">
+                      {datamenu.kategori}
+                    </span>
+                    <p className="text-lg font-bold text-black truncate block capitalize">
+                      {datamenu.nama}
+                    </p>
+                    <div className="flex items-center">
+                      <p className="text-xs">Rp. </p>
+                      <p className="text-lg font-normal text-black cursor-auto my-3">
+                        {" "}
+                        {datamenu.harga.toString()}
+                      </p>
+                      <FontAwesomeIcon
+                        onClick={()=>{fetchTambahKeKeranjang(getIdUser,datamenu.id,1,datamenu.harga)}}
+                        icon={faCartPlus}
+                        width={30}
+                        height={30}
+                        className="ml-auto hover:text-blue-600 hover:text-sm"
+                      ></FontAwesomeIcon>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
+            {Object.values(getMenuSold)?.map(
+              (datamenusold: any, index: number) => (
+                <div
+                  key={index}
+                  className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
+                >
+                  <img
+                    src={`${datamenusold.gambar_menu}`}
+                    alt="Menu"
+                    className="h-40 w-40 object-cover rounded-t-xl grayscale"
+                  />
+                  <div className="px-4 py-3 w-40">
+                    <span className="text-gray-400 mr-3 uppercase text-xs">
+                      {datamenusold.kategori}
+                    </span>
+                    <p className="text-lg font-bold text-black truncate block capitalize">
+                      {datamenusold.nama}
+                    </p>
+                    <div className="flex items-center">
+                      <p className="text-xs font-normal text-black cursor-auto my-3">
+                        {datamenusold.ketersediaan}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
+          </>
+        )}
       </section>
 
-
-
-
-
-       {/* Membuat modal komponen */}
-       {isBukaModal && selectedMenuId !== null && (
-        <div onClick={handleOverlayClick} className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
+      {/* Membuat modal komponen */}
+      {isBukaModal && selectedMenuId&&getIdUser !== null && (
+        <div
+          onClick={handleOverlayClick}
+          className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]"
+        >
           <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6 relative">
             <div className="flex justify-end">
               <FontAwesomeIcon
@@ -200,7 +226,7 @@ export default function dashboardPage() {
                 onClick={closeModal}
               ></FontAwesomeIcon>
             </div>
-            <DetailMenu id={selectedMenuId}></DetailMenu>
+            <DetailMenu idMenu={selectedMenuId} idUser={getIdUser}></DetailMenu>
           </div>
         </div>
       )}

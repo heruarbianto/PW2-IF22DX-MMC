@@ -13,15 +13,15 @@ function Cart() {
   const [getIsiCart, setIsiCart] = useState({});
   const [getKeranjang, setKeranjang] = useState(getIsiCart);
 
-  const fetchKeranjangUser = async () => {
-    const data = await KeranjangUser();
-    console.log("Data Keranjang:", data); // Debugging
-    setIsiCart(data);
-  };
+  // const fetchKeranjangUser = async () => {
+  //   // const data = await KeranjangUser();
+  //   console.log("Data Keranjang:", data); // Debugging
+  //   setIsiCart(data);
+  // };
 
-  useEffect(() => {
-    fetchKeranjangUser();
-  }, []);
+  // useEffect(() => {
+  //   fetchKeranjangUser();
+  // }, []);
 
   useEffect(() => {
     setKeranjang(getIsiCart);

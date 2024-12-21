@@ -31,13 +31,13 @@ const showFooter = pagesWithFooter.includes(pathname);
                   {/* Logo  */}
                   <div className="flex items-center space-x-8">
                     <div className="shrink-0">
-                      <a href="#" title="">
+                      <Link href="/dashboard">
                         <img
                           className="block w-auto h-8"
                           src="/Tukuyo-Logo.png"
-                          alt=""
+                          alt="Logo Tukuyo"
                         />
-                      </a>
+                      </Link>
                     </div>
                   </div>
 

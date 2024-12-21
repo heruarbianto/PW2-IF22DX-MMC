@@ -13,7 +13,13 @@ export const RegisPelanggan = async (
   passwordParam: string,
   alamatParam: string
 ) => {
-  const dataUser = await prisma.tb_user.findMany({});
+  const dataUser = await prisma.tb_user.findMany({
+    select:{
+      email:true,
+      noHp:true,
+      username:true,
+    }
+  });
   // Menggunakan find untuk mencari user berdasarkan email dan no hp
   const emailFound = dataUser.find((user) => user.email === emailParam);
   const noTelpFound = dataUser.find((user) => user.noHp=== noTelpParam);
