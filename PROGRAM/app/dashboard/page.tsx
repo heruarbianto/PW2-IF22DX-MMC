@@ -8,7 +8,7 @@ import {jwtDecode} from 'jwt-decode';
 
 import { useRouter } from "next/navigation";
 
-export default function MainPage() {
+export default function dashboardPage() {
   //  Buat Hook useState
   const [getMenuReady, setMenuReady] = useState({});
   const [getMenuSold, setMenuSold] = useState({});

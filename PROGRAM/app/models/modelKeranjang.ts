@@ -5,7 +5,7 @@ import {PrismaClient} from "@prisma/client";
 const prisma = new PrismaClient();
 
 // fungsi untuk menampilkan semua menu user
-export const KeranjangUser = async () => {
+export const KeranjangUser = async (usrId:number) => {
     // Membuat Variabel menu
     const keranjang = await prisma.tb_keranjang.findMany({
       where: {

@@ -8,19 +8,27 @@ import {
 } from "../models/modelKeranjang";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { ChangeEvent } from "react";
+import {jwtDecode} from 'jwt-decode';
+
 export default function keranjang() {
   const [getIsiCart, setIsiCart] = useState({});
   const [getKeranjang, setKeranjang] = useState(getIsiCart);
   const [getidDelete, setidDelete] = useState<number>();
-  const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   // ambil data dari database
   // ambil data dari database
   const fetchKeranjangUser = async () => {
-    const data = await KeranjangUser();
-    // console.log("Data Keranjang:", data); // Debugging
+      const token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('authToken='))
+      ?.split('=')[1];
+  
+
+    const decoded: { userId:number} = jwtDecode(token as string);
+    const idUser = decoded.userId
+    const data = await KeranjangUser(idUser);
+    // console.log("idUser:", idUser); // Debugging
     setIsiCart(data);
   };
 

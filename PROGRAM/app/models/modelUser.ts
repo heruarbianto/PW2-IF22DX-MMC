@@ -58,6 +58,6 @@ export const LoginUser= async (
 
   // Jika username dan password cocok
    // Membuat token dengan JWT
-   const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+   const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "20m" });
   return token;
 };

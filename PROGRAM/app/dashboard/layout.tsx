@@ -1,5 +1,5 @@
 "use client";
-import "./globals.css";
+import "../globals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
@@ -7,6 +7,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function MainLayout({
   children,
@@ -15,28 +16,15 @@ export default function MainLayout({
 }>) {
   const pathname = usePathname();
   // Daftar halaman yang memerlukan navbar
-const pagesWithNavbar = ["/", "/dashboardadmin"];
+const pagesWithFooter = ["/dashboard"];
 
   // Cek apakah halaman saat ini termasuk dalam daftar
-const showNavbar = pagesWithNavbar.includes(pathname);
+const showFooter = pagesWithFooter.includes(pathname);
 
   return (
-    <html lang="en" data-theme="winter">
-      <body
-        className="font-sans max-h-[400px] overflow-y-auto
-  [&::-webkit-scrollbar]:w-2
-  [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-track]:bg-gray-100
-  [&::-webkit-scrollbar-thumb]:rounded-full
-  [&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
-      >
+        <div>
         {/* Area Header */}
         <header>
-          {/* Navbar hanya tampil jika showNavbar adalah true */}
-          {showNavbar && (
-
             <nav className="bg-white dark:bg-gray-800 antialiased">
               <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
                 <div className="flex items-center justify-between">
@@ -83,18 +71,20 @@ const showNavbar = pagesWithNavbar.includes(pathname);
                   {/* Cart dan User */}
                   <div className="flex items-center lg:space-x-2">
                     {/* Cart Button */}
+                    <Link href={'/dashboard/keranjang'}>
                     <button
                       id="myCartDropdownButton1"
                       type="button"
                       className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-blue-800 dark:text-blue-200"
                     >
-                       <span className="sr-only">Cart</span>
+                      <span className="sr-only">Cart</span>
 
                       <FontAwesomeIcon icon={faCartShopping} />
 
                       <span className="hidden sm:flex m-2">My Cart</span>
                       <FontAwesomeIcon icon={faCaretDown} />
                     </button>
+                      </Link>
 
                     {/* User */}
                     <button
@@ -110,15 +100,14 @@ const showNavbar = pagesWithNavbar.includes(pathname);
                 </div>
               </div>
             </nav>
-          )}
         </header>
 
         {/* Area content */}
         {children}
 
         {/* Area footer */}
+        {showFooter && (
         <footer> 
-        {showNavbar && (
           <div className="bg-gray-800 text-white py-8">
           <div className="container mx-auto px-4">
             {/* Flex Container untuk Tentang Kami dan Kontak */}
@@ -151,9 +140,8 @@ const showNavbar = pagesWithNavbar.includes(pathname);
             </div>
           </div>
           </div>
-        )}
         </footer>
-      </body>
-    </html>
+        )}
+      </div>
   );
 }

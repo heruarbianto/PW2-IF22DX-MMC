@@ -34,7 +34,7 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
       const isProduction = process.env.NODE_ENV === "production";
 
       // Set cookie token
-      document.cookie = `authToken=${respon}; path=/; max-age=900; secure; SameSite=Lax`;
+      document.cookie = `authToken=${respon}; path=/; max-age=1200; secure; SameSite=Lax`;
 
       // Verifikasi token
       const secret = new TextEncoder().encode("INI_ADALAH_JWT_SECRET_TUKUYO");
