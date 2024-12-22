@@ -11,6 +11,7 @@ export const KeranjangUser = async (usrId:number) => {
     const keranjang = await prisma.tb_keranjang.findMany({
       where: {
         idUser: usrId,
+        status: 'FALSE'
       },
       include: {
         menu: true, // Untuk fetch data menu

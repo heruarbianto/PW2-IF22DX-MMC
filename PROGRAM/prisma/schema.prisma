@@ -50,13 +50,17 @@ model tb_user{
   keranjang tb_keranjang[]
 }
 
+enum status {
+  TRUE
+  FALSE
+}
 model tb_keranjang{
   id Int @unique @id @default(autoincrement())
   idUser Int @db.Int
   idMenu Int @db.Int
   quantity Int @db.Int
   total Int @db.Int
-    // buat relasi
+  status status @default(FALSE)    // buat relasi
   user tb_user @relation(fields: [idUser], references: [id], onDelete: Cascade, onUpdate: Cascade)
   menu tb_menu @relation(fields: [idMenu], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
