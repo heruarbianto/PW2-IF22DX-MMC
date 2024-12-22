@@ -8,7 +8,7 @@ import {
 } from "../models/modelKeranjang";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 
 export default function keranjang() {
@@ -18,18 +18,16 @@ export default function keranjang() {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [selectedItemsid, setSelectedItemsid] = useState<number[]>([]);
 
-
   // ambil data dari database
   // ambil data dari database
   const fetchKeranjangUser = async () => {
-      const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('authToken='))
-      ?.split('=')[1];
-  
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
 
-    const decoded: { userId:number} = jwtDecode(token as string);
-    const idUser = decoded.userId
+    const decoded: { userId: number } = jwtDecode(token as string);
+    const idUser = decoded.userId;
     const data = await KeranjangUser(idUser);
     // console.log("idUser:", idUser); // Debugging
     setIsiCart(data);
@@ -43,12 +41,12 @@ export default function keranjang() {
     location.reload();
   };
 
-  const klikDelete = async (idKeranjang: number, namaMenu:string) => {
+  const klikDelete = async (idKeranjang: number, namaMenu: string) => {
     setidDelete(idKeranjang);
     const element = document.getElementById("namaMenu") as HTMLHeadingElement;
-      if (element) {
-        element.innerText = namaMenu;
-      }
+    if (element) {
+      element.innerText = namaMenu;
+    }
     const modal = document.getElementById("deleteMenu") as HTMLDialogElement;
     if (modal) {
       modal.showModal();
@@ -90,7 +88,7 @@ export default function keranjang() {
       return updatedKeranjang;
     });
   };
-  
+
   const updatekurangQuantity = async (
     namaMenu: string,
     idKeranjangg: number,
@@ -99,7 +97,7 @@ export default function keranjang() {
   ) => {
     // Menghitung kuantitas baru setelah dikurangi
     const updatedQuantity = quantity - 1;
-    
+
     // Jika kuantitas setelah dikurangi kurang dari 1, tampilkan modal dan hentikan proses
     if (updatedQuantity < 1) {
       setidDelete(idKeranjangg);
@@ -107,7 +105,7 @@ export default function keranjang() {
       if (element) {
         element.innerText = namaMenu;
       }
-      
+
       const modal = document.getElementById("deleteMenu") as HTMLDialogElement;
       if (modal) {
         modal.showModal();
@@ -117,11 +115,11 @@ export default function keranjang() {
 
     // Jika quantity valid, lakukan update ke database
     await kurangUpdate(idKeranjangg, quantity, hargaMenu);
-    
+
     // Update state keranjang
     setKeranjang((prevKeranjang: any[]) => {
       const updatedKeranjang = [...prevKeranjang];
-      
+
       // Cari indeks berdasarkan ID
       const index = updatedKeranjang.findIndex(
         (item) => item.id === idKeranjangg
@@ -135,7 +133,7 @@ export default function keranjang() {
           total: hargaMenu * updatedQuantity,
         };
       }
-      
+
       return updatedKeranjang;
     });
   };
@@ -152,7 +150,7 @@ export default function keranjang() {
       setSelectedItems(allIds);
     }
   };
-  
+
   // Handle checkbox individu
   const handleSelectItem = (id: number) => {
     if (selectedItems.includes(id)) {
@@ -163,33 +161,33 @@ export default function keranjang() {
       setSelectedItems([...selectedItems, id]);
     }
   };
-  
+
   // Hitung apakah semua item dipilih
   const isAllSelected =
     Object.keys(selectedItems).length === Object.keys(getKeranjang).length;
 
-    // Ambil total jumlah produk dan harga
-    // Hitung total jumlah produk dan harga keseluruhan berdasarkan item yang dipilih
-    const calculateTotals = () => {
-      const selectedData = Object.values(getKeranjang).filter((item: any) =>
-        selectedItems.includes(item.id)
+  // Ambil total jumlah produk dan harga
+  // Hitung total jumlah produk dan harga keseluruhan berdasarkan item yang dipilih
+  const calculateTotals = () => {
+    const selectedData = Object.values(getKeranjang).filter((item: any) =>
+      selectedItems.includes(item.id)
     );
-    
+
     const totalProduk = selectedData.reduce(
       (acc: number, item: any) => acc + item.quantity,
       0
     );
-    
+
     const totalHarga = selectedData.reduce(
       (acc: number, item: any) => acc + item.total,
       0
     );
-  // Set array idKeranjang yang dipilih
-  return { totalProduk, totalHarga };
-};
-const { totalProduk, totalHarga } = calculateTotals();
-//  const abc = selectedItems.map((id)=>id)
-//  setSelectedItemsid(abc)
+    // Set array idKeranjang yang dipilih
+    return { totalProduk, totalHarga };
+  };
+  const { totalProduk, totalHarga } = calculateTotals();
+  //  const abc = selectedItems.map((id)=>id)
+  //  setSelectedItemsid(abc)
   const handleDeleteSelected = async () => {
     try {
       // Hapus semua item yang dipilih secara paralel
@@ -306,7 +304,9 @@ const { totalProduk, totalHarga } = calculateTotals();
               {/* Hapus */}
               <button
                 className="text-red-500 hover:underline"
-                onClick={() => klikDelete(dataKeranjang.id, dataKeranjang.menu.nama)}
+                onClick={() =>
+                  klikDelete(dataKeranjang.id, dataKeranjang.menu.nama)
+                }
               >
                 Hapus
               </button>
@@ -345,7 +345,23 @@ const { totalProduk, totalHarga } = calculateTotals();
             Rp{totalHarga.toLocaleString("id-ID")}
           </span>
         </div>
-        <Link href={`/dashboard/keranjang/checkout/${selectedItems.join('/')}`} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition duration-200 w-full sm:w-auto">
+        <Link
+          href={
+            isAnyItemSelected
+              ? `/dashboard/keranjang/checkout/${selectedItems.join("/")}`
+              : "#"
+          }
+          className={`px-6 py-2 rounded transition duration-200 w-full sm:w-auto ${
+            isAnyItemSelected
+              ? "bg-blue-500 text-white hover:bg-orange-600"
+              : "bg-gray-400 text-gray-200 cursor-not-allowed"
+          }`}
+          onClick={(e) => {
+            if (!isAnyItemSelected) {
+              e.preventDefault(); // Mencegah navigasi jika tidak ada item yang dipilih
+            }
+          }}
+        >
           Checkout
         </Link>
       </div>
