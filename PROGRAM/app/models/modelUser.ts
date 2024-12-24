@@ -67,3 +67,18 @@ export const LoginUser= async (
    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "20m" });
   return token;
 };
+
+export const DetailUser= async(idMenuParameter: number)=>{
+  const user = await prisma.tb_user.findMany({
+    where: {
+      id : idMenuParameter
+    },
+    select:{
+      namaLengkap:true,
+      username: true,
+      noHp: true,
+      email: true
+    }
+  })
+  return user;
+}
