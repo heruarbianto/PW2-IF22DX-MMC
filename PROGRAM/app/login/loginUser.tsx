@@ -9,8 +9,6 @@ import {
 import { LoginUser } from "../models/modelUser";
 import { jwtVerify } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-
 export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   const [showAlertRegisterSukses, setShowAlertRegisterSukses] = useState(false);
   const [getUsername, setUsername] = useState("");
@@ -19,6 +17,8 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   const [loading, setLoading] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null); // Menyimpan role pengguna
   const router = useRouter();
+   // State untuk mengontrol apakah modal terbuka atau tertutup (Verify Login)
+   const [isModalVerifyLogin, setIsModalVerifyLogin] = useState(false);
 
   const fetchUserLogin = async () => {
     setLoading(true);
@@ -29,9 +29,13 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
         setShowAlertError(true);
         setTimeout(() => setShowAlertError(false), 3000);
         setLoading(false);
+        setIsModalVerifyLogin(false)
+        const modal = document.getElementById("gotodashboard") as HTMLDialogElement;
+      if (modal) {
+        modal.close();
+      }
         return;
       }
-      const isProduction = process.env.NODE_ENV === "production";
 
       // Set cookie token
       document.cookie = `authToken=${respon}; path=/; max-age=1200; secure; SameSite=Lax`;
@@ -52,15 +56,18 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsModalVerifyLogin(true)
     await fetchUserLogin();
+    
   };
-
+  
   useEffect(() => {
+    
     // console.log("User role updated:", userRole); // Debugging log
     if (userRole === "ADMIN") {
-      router.push("../dashboardadmin");
+      router.push("/dashboardadmin");
     } else if (userRole === "PELANGGAN") {
-      router.push("../dashboard");
+      router.push("/dashboard");
     }
 
     if (localStorage.getItem("registerSuccess") === "true") {
@@ -71,98 +78,112 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
   }, [userRole, router]);
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a
-          href="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <img
-            className="w-auto h-8 mr-2"
-            src="../Tukuyo-Logo.png"
-            alt="logo"
-          />
-        </a>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            {showAlertRegisterSukses && (
-              <div
-                className="flex items-center p-4 mb-4 rounded-xl text-sm border border-emerald-400 bg-emerald-50 text-emerald-500"
-                role="alert"
-              >
-                <FontAwesomeIcon icon={faCircleCheck} className="mx-1" />
-                <span className="font-semibold mr-1">Register Berhasil</span>
-              </div>
-            )}
-            {showAlertError && (
-              <div
-                className="flex items-center p-4 mb-4 rounded-xl text-sm border border-red-400 bg-red-50 text-red-500"
-                role="alert"
-              >
-                <FontAwesomeIcon icon={faCircleExclamation} />
-                <span className="font-semibold mr-1">
-                  Username/Password Salah
-                </span>
-              </div>
-            )}
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
-            </h1>
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="Username"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+    <div>
+      <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+          <a
+            href="#"
+            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+          >
+            <img
+              className="w-auto h-8 mr-2"
+              src="../Tukuyo-Logo.png"
+              alt="logo"
+            />
+          </a>
+          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+              {showAlertRegisterSukses && (
+                <div
+                  className="flex items-center p-4 mb-4 rounded-xl text-sm border border-emerald-400 bg-emerald-50 text-emerald-500"
+                  role="alert"
                 >
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="Username"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="udin123"
-                  required
-                  value={getUsername}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  <FontAwesomeIcon icon={faCircleCheck} className="mx-1" />
+                  <span className="font-semibold mr-1">Register Berhasil</span>
+                </div>
+              )}
+              {showAlertError && (
+                <div
+                  className="flex items-center p-4 mb-4 rounded-xl text-sm border border-red-400 bg-red-50 text-red-500"
+                  role="alert"
                 >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                  value={getPassword}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                {loading ? "Loading..." : "Sign in"}
-              </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
-                <a
-                  href="#"
-                  onClick={toggleForm}
-                  className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                  <FontAwesomeIcon icon={faCircleExclamation} />
+                  <span className="font-semibold mr-1">
+                    Username/Password Salah
+                  </span>
+                </div>
+              )}
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                Sign in to your account
+              </h1>
+              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                <div>
+                  <label
+                    htmlFor="Username"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    id="Username"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="udin123"
+                    required
+                    value={getUsername}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="••••••••"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required
+                    value={getPassword}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
-                  Register
-                </a>
-              </p>
-            </form>
+                  {loading ? "Loading..." : "Sign in"}
+                </button>
+                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                  Don’t have an account yet?{" "}
+                  <a
+                    href="#"
+                    onClick={toggleForm}
+                    className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                  >
+                    Register
+                  </a>
+                </p>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+      {isModalVerifyLogin && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-800 bg-opacity-50">
+                    <div className="relative p-4 w-full max-w-md max-h-full">
+                        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                            <div className="p-4 md:p-5 text-center">
+                            <span className="loading loading-ring loading-lg text-blue-600"></span>
+                                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Connecting to dashboard...</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+    </div>
   );
 }

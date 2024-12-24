@@ -170,22 +170,21 @@ export default function MainPage() {
 
 
 
-
-       {/* Membuat modal komponen */}
+       {/* Membuat modal komponen
        {isBukaModal && selectedMenuId !== null && (
         <div onClick={handleOverlayClick} className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
           <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6 relative">
             <div className="flex justify-end">
-              <FontAwesomeIcon
+            <FontAwesomeIcon
                 icon={faXmark}
                 className="ml-auto mb-2"
                 onClick={closeModal}
-              ></FontAwesomeIcon>
-            </div>
+                ></FontAwesomeIcon>
+                </div>
             <DetailMenu id={selectedMenuId}></DetailMenu>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

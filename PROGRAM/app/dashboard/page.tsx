@@ -5,7 +5,7 @@ import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
   filterCategoryReady,
   filterCategorySold,
-  getAllMenuReady,
+  getAllMenuReady, 
   getAllMenuSold,
 } from "../models/modelMenu";
 import DetailMenu from "../modal/detailMenu";

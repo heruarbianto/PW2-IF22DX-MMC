@@ -21,7 +21,31 @@ export const KeranjangUser = async (usrId:number) => {
     return keranjang;
   };
 
-  // Buat fungsi tambah plus Keranjang
+// Fungsi untuk menampilkan keranjang berdasarkan beberapa id dan idUser
+export const keranjangPemesanan = async (keranjangIds: number[], idUserParameter: number) => {
+  // Query ke database untuk memvalidasi keranjang
+  const keranjang = await prisma.tb_keranjang.findMany({
+    where: {
+      id: {
+        in: keranjangIds, // Memastikan ID keranjang termasuk dalam array yang diberikan
+      },
+      idUser: idUserParameter, // Memastikan keranjang sesuai dengan idUser
+    },
+    include: {
+      menu: true, // Fetch data menu
+    },
+  });
+ 
+  // Periksa apakah jumlah keranjang yang valid sama dengan jumlah ID yang diminta
+  if (keranjang.length !== keranjangIds.length) {
+    throw new Error('Beberapa ID keranjang tidak valid atau tidak sesuai dengan pengguna.');
+  }
+
+  return keranjang; // Kembalikan data keranjang yang valid
+};
+
+
+// Buat fungsi tambah plus Keranjang
 export const tambahUpdate = async (
   idKeranjang: number,
   quantity: number,
