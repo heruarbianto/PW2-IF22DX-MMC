@@ -187,9 +187,9 @@ export default function pageCheckout({
               id="payment-method"
               className="w-full p-2 border rounded-lg text-gray-700"
             >
-              <option value="transfer">Transfer Bank</option>
               <option value="cod">Bayar di Tempat (COD)</option>
-              <option value="ewallet">E-Wallet</option>
+              <option disabled value="transfer">Transfer Bank(tahap pengembangan)</option>
+              <option disabled value="ewallet">E-Wallet(Tahap Pengembangan)</option>
             </select>
           </div>
           {/* Tombol Pesan */}
