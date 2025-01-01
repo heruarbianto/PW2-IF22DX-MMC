@@ -155,14 +155,11 @@ export default function MainPage() {
 </div>
 
 
-      <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+      <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
       {loading ? (
         // Tampilkan elemen loading
         <div className="col-span-full flex justify-center items-center">
           <div className="flex space-x-4">
-            <span className="loading loading-ring loading-xs text-blue-600"></span>
-            <span className="loading loading-ring loading-sm text-blue-600"></span>
-            <span className="loading loading-ring loading-md text-blue-600"></span>
             <span className="loading loading-ring loading-lg text-blue-600"></span>
           </div>
         </div>
