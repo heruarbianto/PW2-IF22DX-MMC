@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import {jwtDecode} from 'jwt-decode';
 
 export default function MainPage() {
+  
   //  Buat Hook useState
   const [getMenu, setMenu] = useState({});
   const [activeTab, setActiveTab] = useState("All"); // Default active tab
@@ -18,7 +19,7 @@ export default function MainPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [AlertDataNull, setAlertDataNull] = useState(false) //state untuk menampilkan alert jika data kosong
-
+  
   const openModal = (id: number) => {
     setBukaMOdal(true);
     setSelectedMenuId(id);

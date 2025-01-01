@@ -9,7 +9,12 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-
+  // Membuat fungsi logout
+  const handleLogout = () => {
+    document.cookie = "authToken=; path=/; max-age=0; secure; SameSite=Lax"; // Menghapus cookie token
+    alert("Anda telah logout!");
+    window.location.href = "/"; // Redirect ke halaman utama atau login
+  };
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
@@ -55,12 +60,12 @@ export default function MainLayout({
         </nav>
 
         <aside
-        id="logo-sidebar"
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700`}
-        aria-label="Sidebar"
-      >
+          id="logo-sidebar"
+          className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform transform ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700`}
+          aria-label="Sidebar"
+        >
           <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
             <ul className="space-y-2 font-medium">
               <li>
@@ -158,7 +163,8 @@ export default function MainLayout({
                 </a>
               </li>
               <li>
-                <a
+                <Link
+                onClick={handleLogout}
                   href="#"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 >
@@ -177,8 +183,8 @@ export default function MainLayout({
                       d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"
                     />
                   </svg>
-                  <span className="flex-1 ms-3 whitespace-nowrap">Sign In</span>
-                </a>
+                  <span className="flex-1 ms-3 whitespace-nowrap">Logout</span>
+                </Link>
               </li>
               <li>
                 <a
