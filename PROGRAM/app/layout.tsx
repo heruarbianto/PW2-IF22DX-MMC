@@ -5,14 +5,16 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-
+import MainPage from "./page";  // Mengimpor MainPage
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [searchQuery, setSearchQuery] = useState("");  // Menambahkan state searchQuery
   const pathname = usePathname();
   // Daftar halaman yang memerlukan navbar
   const pagesWithNavbar = ["/"];
@@ -24,13 +26,13 @@ export default function MainLayout({
     <html lang="en" data-theme="winter">
       <body
         className="font-sans max-h-[400px] overflow-y-auto
-                  [&::-webkit-scrollbar]:w-2
-                  [&::-webkit-scrollbar-track]:rounded-full
-                [&::-webkit-scrollbar-track]:bg-gray-100
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                [&::-webkit-scrollbar-thumb]:bg-gray-300
-                dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-                dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+  [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
       >
         {/* Area Header */}
         <header>
@@ -58,6 +60,7 @@ export default function MainLayout({
                       >
                         Search
                       </button>
+
                   {/* Cart dan User */}
                   <div className="flex items-center lg:space-x-2">
                     {/* Cart Button */}
@@ -90,6 +93,8 @@ export default function MainLayout({
             </nav>
           )}
         </header>
+         {/* Mengirimkan searchQuery dan setSearchQuery ke MainPage */}
+         <MainPage searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
         {/* Area content */}
         {children}
