@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus, faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { filterCategoryReady, filterCategorySold, getAllMenuReady, getAllMenuSold } from "./models/modelMenu";
 import DetailMenu from "./modal/detailMenu";
 
@@ -72,15 +72,19 @@ export default function MainPage() {
       <div className="max-w-screen-md mx-auto">
         <div className="bg-white py-2 px-3">
           {/* Input Pencarian */}
-          <div className="flex justify-center mb-5">
-            <input
-              type="text"
-              placeholder="Cari menu..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full max-w-sm px-4 py-2 border border-gray-300 rounded-md"
-            />
-          </div>
+         <div className="relative flex items-center">
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            className="absolute left-4 text-gray-400"
+          />
+          <input
+            type="text"
+            placeholder="Cari menu..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
+          />
+        </div>
   
           {/* Tab Menu */}
           <div className="flex flex-wrap gap-4">
