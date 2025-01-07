@@ -5,39 +5,39 @@ import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { filterCategoryReady, filterCategorySold, getAllMenuReady, getAllMenuSold } from "./models/modelMenu";
 import DetailMenu from "./modal/detailMenu";
 
-export default function MainPage({
-  searchQuery,
-}: {
-  searchQuery: string;
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
-}) {
+export default function MainPage() {
+  //  Buat Hook useState
   const [getMenuReady, setMenuReady] = useState({});
   const [getMenuSold, setMenuSold] = useState({});
-  const [activeTab, setActiveTab] = useState("All");
-  const [isBukaModal, setBukaMOdal] = useState(false);
-  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("All"); // Default active tab
+  const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
+  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
 
   const openModal = (id: number) => {
     setBukaMOdal(true);
     setSelectedMenuId(id);
-  };
+  }
   const closeModal = () => setBukaMOdal(false);
+  // Fungsi untuk menangani klik di luar modal (untuk menutup modal)
   const handleOverlayClick = (e: React.MouseEvent) => {
+    // Cek apakah klik terjadi di luar konten modal
     if (e.target === e.currentTarget) {
       closeModal();
     }
   };
 
   const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
+    setActiveTab(tab); // Set the clicked tab as active
   };
-
+  // Buat Fungsi untuk respon fungsi untuk tampilka data menu
   async function fetchAllMenu() {
     setLoading(true);
     let readyMenu = [];
     let soldMenu = [];
-
+  
     if (activeTab === "All") {
       readyMenu = await getAllMenuReady();
       soldMenu = await getAllMenuSold();
@@ -48,28 +48,40 @@ export default function MainPage({
       readyMenu = await filterCategoryReady("Minuman");
       soldMenu = await filterCategorySold("Minuman");
     }
-
+  
+    // Filter berdasarkan pencarian
     readyMenu = readyMenu.filter((menu) =>
       menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
     );
     soldMenu = soldMenu.filter((menu) =>
       menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
+  
     setMenuReady(readyMenu);
     setMenuSold(soldMenu);
     setLoading(false);
   }
-
+  
+  // BBUat Hook useEffect
   useEffect(() => {
     fetchAllMenu();
-  }, [activeTab, searchQuery]);
-
+  }, [activeTab, searchQuery]); // Menambahkan searchQuery ke dalam dependensi
+  
   return (
     <div className="px-10">
       <div className="max-w-screen-md mx-auto">
         <div className="bg-white py-2 px-3">
-
+          {/* Input Pencarian */}
+          <div className="flex justify-center mb-5">
+            <input
+              type="text"
+              placeholder="Cari menu..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full max-w-sm px-4 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+  
           {/* Tab Menu */}
           <div className="flex flex-wrap gap-4">
             <p
@@ -105,9 +117,10 @@ export default function MainPage({
           </div>
         </div>
       </div>
-
+  
       <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
         {loading ? (
+          // Tampilkan elemen loading
           <div className="col-span-full flex justify-center items-center">
             <div className="flex space-x-4">
               <span className="loading loading-ring loading-xs text-blue-600"></span>

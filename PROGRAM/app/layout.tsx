@@ -117,7 +117,7 @@ export default function MainLayout({
           )}
         </header>
          {/* Mengirimkan searchQuery dan setSearchQuery ke MainPage */}
-         <MainPage searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        {/* <MainPage searchQuery={searchQuery} setSearchQuery={setSearchQuery} /> */}
 
         {/* Area content */}
         {children}
