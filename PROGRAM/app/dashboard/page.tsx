@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus, faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
   filterCategoryReady,
   filterCategorySold,
@@ -23,6 +23,7 @@ export default function dashboardPage() {
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
   const [loading, setLoading] = useState(true);
   const [getIdUser, setidUser] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const router = useRouter();
   const openModal = (id: number) => {
@@ -43,22 +44,33 @@ export default function dashboardPage() {
   };
   // Buat Fungsi untuk respon fungsi untuk tampilka data menu
   async function fetchAllMenu() {
-    setLoading(true);
-    // Isi nilai setValue
-    if (activeTab === "All") {
-      setMenuReady(await getAllMenuReady());
-      setMenuSold(await getAllMenuSold());
-      setLoading(false);
-    } else if (activeTab === "Makanan") {
-      setMenuReady(await filterCategoryReady("Makanan"));
-      setMenuSold(await filterCategorySold("Makanan"));
-      setLoading(false);
-    } else {
-      setMenuReady(await filterCategoryReady("Minuman"));
-      setMenuSold(await filterCategorySold("Minuman"));
+      setLoading(true);
+      let readyMenu = [];
+      let soldMenu = [];
+    
+      if (activeTab === "All") {
+        readyMenu = await getAllMenuReady();
+        soldMenu = await getAllMenuSold();
+      } else if (activeTab === "Makanan") {
+        readyMenu = await filterCategoryReady("Makanan");
+        soldMenu = await filterCategorySold("Makanan");
+      } else {
+        readyMenu = await filterCategoryReady("Minuman");
+        soldMenu = await filterCategorySold("Minuman");
+      }
+    
+      // Filter berdasarkan pencarian
+      readyMenu = readyMenu.filter((menu) =>
+        menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      soldMenu = soldMenu.filter((menu) =>
+        menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    
+      setMenuReady(readyMenu);
+      setMenuSold(soldMenu);
       setLoading(false);
     }
-  }
   
   const fetchTambahKeKeranjang = async (
     idUserParameter:number,
@@ -89,11 +101,27 @@ export default function dashboardPage() {
     }
     // Panggil fungsi fetchData
     fetchAllMenu();
-  }, [activeTab]);
+  }, [activeTab,  searchQuery]);
   return (
     <div className="px-10">
       <div className="max-w-screen-md mx-auto">
         <div className="bg-white py-2 px-3">
+          {/* Input Pencarian */}
+                   <div className="relative flex items-center">
+                    <FontAwesomeIcon
+                      icon={faMagnifyingGlass}
+                      className="absolute left-4 text-gray-400"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Cari menu..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-12 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
+                    />
+                  </div>
+            
+                    {/* Tab Menu */}
           <div className="flex flex-wrap gap-4">
             <p
               onClick={() => handleTabClick("All")}
