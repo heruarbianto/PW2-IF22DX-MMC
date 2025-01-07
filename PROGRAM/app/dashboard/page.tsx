@@ -10,9 +10,10 @@ import {
 } from "../models/modelMenu";
 import DetailMenu from "../modal/detailMenu";
 import { jwtDecode } from "jwt-decode";
-
 import { useRouter } from "next/navigation";
 import { tambahKeKeranjang } from "../models/modelKeranjang";
+import { getSearchQuery } from "../models/modelSearch"; // Import model
+
 
 export default function dashboardPage() {
   //  Buat Hook useState
@@ -24,8 +25,9 @@ export default function dashboardPage() {
   const [loading, setLoading] = useState(true);
   const [getIdUser, setidUser] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState('');
-
   const router = useRouter();
+  const [data, setData] = useState([]);
+
   const openModal = (id: number) => {
     setBukaMOdal(true);
     setSelectedMenuId(id);
@@ -38,6 +40,8 @@ export default function dashboardPage() {
       closeModal();
     }
   };
+
+  
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab); // Set the clicked tab as active
@@ -99,6 +103,9 @@ export default function dashboardPage() {
     if (decoded.exp < now || !["PELANGGAN"].includes(decoded.role)) {
       router.push("/forbidden");
     }
+     // Ambil query pencarian dari model
+     const query = getSearchQuery();
+     setSearchQuery(query);
     // Panggil fungsi fetchData
     fetchAllMenu();
   }, [activeTab,  searchQuery]);
@@ -107,20 +114,8 @@ export default function dashboardPage() {
       <div className="max-w-screen-md mx-auto">
         <div className="bg-white py-2 px-3">
           {/* Input Pencarian */}
-                   <div className="relative flex items-center">
-                    <FontAwesomeIcon
-                      icon={faMagnifyingGlass}
-                      className="absolute left-4 text-gray-400"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Cari menu..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-12 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
-                    />
-                  </div>
-            
+          <p>Hasil pencarian: {searchQuery}</p>
+                             
                     {/* Tab Menu */}
           <div className="flex flex-wrap gap-4">
             <p
