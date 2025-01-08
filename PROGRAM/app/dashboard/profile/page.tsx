@@ -1,19 +1,46 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { DetailUser } from "@/app/models/modelUser";
+import { jwtDecode } from "jwt-decode";
 
 
 export default function Page() {
 
   const [imageError, setImageError] = useState(false);
+  const [getIdUser, setidUser] = useState<number>(0);
+  const [userData, setUserData] = useState<{ namaLengkap: string; email: string } | null>(null);
 
   const handleLogout = () => {
     document.cookie = "authToken=; path=/; max-age=0; secure; SameSite=Lax"; // Menghapus cookie token
     alert("Anda telah logout!");
     window.location.href = "/"; // Redirect ke halaman utama atau login
   };
+   // BBUat Hook useEffect
+     useEffect(() => {
+       const token = document.cookie
+         .split("; ")
+         .find((row) => row.startsWith("authToken="))
+         ?.split("=")[1];
+       const decoded: { userId: number; role: string; exp: number } = jwtDecode(
+         token as string
+       );
+       const now = Math.floor(Date.now() / 1000);
+       setidUser(decoded.userId);
+   
+       // Ambil detail user berdasarkan userId
+      DetailUser(decoded.userId).then((data) => {
+        if (data && data.length > 0) {
+          setUserData(data[0]);
+        } else {
+          alert("Gagal memuat data pengguna.");
+        }
+      });
+    
+       
+     }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen p-4">
@@ -41,8 +68,8 @@ export default function Page() {
                 )}
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-800">John Doe</h2>
-                <p className="text-sm text-gray-500">johndoe@example.com</p>
+                <h2 className="text-xl font-semibold text-gray-800">{userData?.namaLengkap}</h2>
+                <p className="text-sm text-gray-500">{userData?.email}</p>
               </div>
             </div>
             <button
@@ -122,3 +149,7 @@ export default function Page() {
     </div>
   );
 };
+function fetchAllMenu() {
+  throw new Error("Function not implemented.");
+}
+
