@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import "../globals.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 export default function MainLayout({
   children,
