@@ -102,3 +102,14 @@ export const updateUser = async (userId: number, updatedData: any) => {
     return "error";
   }
 };
+
+export async function getAllUsers() {
+  try {
+    const users = await prisma.tb_user.findMany();
+    return users; // Mengembalikan array user
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null; // Mengembalikan null jika terjadi kesalahan
+  }
+}
+

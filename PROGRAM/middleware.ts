@@ -54,7 +54,7 @@ export async function middleware(req: NextRequest) {
       return NextResponse.next(); // Jangan redirect jika sudah di halaman dashboard
     }
     // Redirect ke dashboard admin jika pengguna dengan role 'ADMIN' mencoba mengakses dashboard pelanggan
-    if (role === 'ADMIN' && req.nextUrl.pathname.startsWith('/dashboard')||req.nextUrl.pathname.startsWith('/login')) {
+    if (role === 'ADMIN' && req.nextUrl.pathname.startsWith('/dashboard')&&req.nextUrl.pathname.startsWith('/login')) {
       return NextResponse.redirect(new URL('/dashboardadmin', req.url));
     }
     // Redirect ke dashboard pelanggan jika pengguna dengan role 'PELANGGAN' mencoba mengakses dashboard admin
