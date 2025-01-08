@@ -82,3 +82,34 @@ export const DetailUser= async(idMenuParameter: number)=>{
   })
   return user;
 }
+
+export const updateUser = async (userId: number, updatedData: any) => {
+  const { namaLengkap, email, username, noHp } = updatedData;
+
+  try {
+    await prisma.tb_user.update({
+      where: { id: userId },
+      data: {
+        namaLengkap,
+        email,
+        username,
+        noHp,
+      },
+    });
+    return "success";
+  } catch (error) {
+    console.error(error);
+    return "error";
+  }
+};
+
+export async function getAllUsers() {
+  try {
+    const users = await prisma.tb_user.findMany();
+    return users; // Mengembalikan array user
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null; // Mengembalikan null jika terjadi kesalahan
+  }
+}
+

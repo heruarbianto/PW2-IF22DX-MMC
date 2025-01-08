@@ -4,21 +4,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [searchQuery, setSearchQuery] = useState("");  // Menambahkan state searchQuery
   const pathname = usePathname();
   // Daftar halaman yang memerlukan navbar
-const pagesWithNavbar = ["/"];
+  const pagesWithNavbar = ["/"];
 
   // Cek apakah halaman saat ini termasuk dalam daftar
-const showNavbar = pagesWithNavbar.includes(pathname);
+  const showNavbar = pagesWithNavbar.includes(pathname);
 
   return (
     <html lang="en" data-theme="winter">
@@ -52,34 +52,6 @@ const showNavbar = pagesWithNavbar.includes(pathname);
                       </a>
                     </div>
                   </div>
-
-                  <form className="w-3/5 mx-auto">
-                    <label
-                      htmlFor="default-search"
-                      className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                    >
-                      Search
-                    </label>
-                    <div className="relative w-full">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <FontAwesomeIcon icon={faMagnifyingGlass} />
-                      </div>
-                      <input
-                        type="search"
-                        id="default-search"
-                        className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Search Foods, Drinks..."
-                        required
-                      />
-                      <button
-                        type="submit"
-                        className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                      >
-                        Search
-                      </button>
-                    </div>
-                  </form>
-
                   {/* Cart dan User */}
                   <div className="flex items-center lg:space-x-2">
                     {/* Cart Button */}
@@ -112,6 +84,8 @@ const showNavbar = pagesWithNavbar.includes(pathname);
             </nav>
           )}
         </header>
+         {/* Mengirimkan searchQuery dan setSearchQuery ke MainPage */}
+        {/* <MainPage searchQuery={searchQuery} setSearchQuery={setSearchQuery} /> */}
 
         {/* Area content */}
         {children}
