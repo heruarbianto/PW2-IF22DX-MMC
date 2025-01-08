@@ -5,14 +5,13 @@ import { faCartPlus, faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-
 import {
   filterCategoryReady,
   filterCategorySold,
-  getAllMenuReady, 
+  getAllMenuReady,
   getAllMenuSold,
 } from "../models/modelMenu";
 import DetailMenu from "../modal/detailMenu";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { tambahKeKeranjang } from "../models/modelKeranjang";
-import { getSearchQuery } from "../models/modelSearch"; // Import model
 
 
 
@@ -41,62 +40,62 @@ export default function dashboardPage() {
     }
   };
 
-  
+
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab); // Set the clicked tab as active
   };
   // Buat Fungsi untuk respon fungsi untuk tampilka data menu
   async function fetchAllMenu() {
-      setLoading(true);
-      let readyMenu = [];
-      let soldMenu = [];
-    
-      if (activeTab === "All") {
-        readyMenu = await getAllMenuReady();
-        soldMenu = await getAllMenuSold();
-      } else if (activeTab === "Makanan") {
-        readyMenu = await filterCategoryReady("Makanan");
-        soldMenu = await filterCategorySold("Makanan");
-      } else {
-        readyMenu = await filterCategoryReady("Minuman");
-        soldMenu = await filterCategorySold("Minuman");
-      }
-    
-      // Filter berdasarkan pencarian
-      readyMenu = readyMenu.filter((menu) =>
-        menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      soldMenu = soldMenu.filter((menu) =>
-        menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    
-      setMenuReady(readyMenu);
-      setMenuSold(soldMenu);
-      setLoading(false);
+    setLoading(true);
+    let readyMenu = [];
+    let soldMenu = [];
+
+    if (activeTab === "All") {
+      readyMenu = await getAllMenuReady();
+      soldMenu = await getAllMenuSold();
+    } else if (activeTab === "Makanan") {
+      readyMenu = await filterCategoryReady("Makanan");
+      soldMenu = await filterCategorySold("Makanan");
+    } else {
+      readyMenu = await filterCategoryReady("Minuman");
+      soldMenu = await filterCategorySold("Minuman");
     }
-  
+
+    // Filter berdasarkan pencarian
+    readyMenu = readyMenu.filter((menu) =>
+      menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    soldMenu = soldMenu.filter((menu) =>
+      menu.nama.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    setMenuReady(readyMenu);
+    setMenuSold(soldMenu);
+    setLoading(false);
+  }
+
   const fetchTambahKeKeranjang = async (
-    idUserParameter:number,
-    idMenuParameter:number,
-    quantityParameter:number,
-    hargaParameter:number) => {
-      await tambahKeKeranjang(idUserParameter, idMenuParameter,quantityParameter,hargaParameter)
-      location.reload();
-    };
-    // BBUat Hook useEffect
-    useEffect(() => {
-      const token = document.cookie
+    idUserParameter: number,
+    idMenuParameter: number,
+    quantityParameter: number,
+    hargaParameter: number) => {
+    await tambahKeKeranjang(idUserParameter, idMenuParameter, quantityParameter, hargaParameter)
+    location.reload();
+  };
+  // BBUat Hook useEffect
+  useEffect(() => {
+    const token = document.cookie
       .split("; ")
       .find((row) => row.startsWith("authToken="))
       ?.split("=")[1];
-      const decoded: { userId: number; role: string; exp: number } = jwtDecode(
-        token as string
-      );
-      const now = Math.floor(Date.now() / 1000);
-      setidUser(decoded.userId);
-        
-      if (!token) {
+    const decoded: { userId: number; role: string; exp: number } = jwtDecode(
+      token as string
+    );
+    const now = Math.floor(Date.now() / 1000);
+    setidUser(decoded.userId);
+
+    if (!token) {
       router.push("/login");
     }
 
@@ -108,77 +107,71 @@ export default function dashboardPage() {
     //  setSearchQuery(query);
     // Panggil fungsi fetchData
     fetchAllMenu();
-  }, [activeTab,  searchQuery]);
+  }, [activeTab, searchQuery]);
   return (
     <div className="px-10">
       <div className="max-w-screen-md mx-auto">
         <div className="bg-white py-2 px-3">
+          <div className="flex flex-wrap items-center justify-between gap-4">
 
-          
-                             
-        <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                {/* Input Pencarian */}
 
-        <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-  {/* Input Pencarian */}
-  
 
-  {/* Tab Menu */}
-  <div className="flex flex-wrap gap-4 w-full sm:w-auto order-2 sm:order-1">
-    <p
-      onClick={() => handleTabClick("All")}
-      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm transition-all duration-200 ease-in-out ${
-        activeTab === "All"
-          ? "border-b-blue-600 text-blue-600 font-semibold"
-          : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-      }`}
-    >
-      All
-    </p>
-    <p
-      onClick={() => handleTabClick("Makanan")}
-      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-        activeTab === "Makanan"
-          ? "border-b-blue-600 text-blue-600 font-semibold"
-          : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-      }`}
-    >
-      Makanan
-    </p>
-    <p
-      onClick={() => handleTabClick("Minuman")}
-      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-        activeTab === "Minuman"
-          ? "border-b-blue-600 text-blue-600 font-semibold"
-          : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-      }`}
-    >
-      Minuman
-    </p>
-  </div>
-  <div className="relative w-auto order-1">
-  {/* Ikon Pencarian */}
-  <FontAwesomeIcon
-    icon={faMagnifyingGlass}
-    className="absolute left-3 top-3 text-gray-400"
-  />
+                {/* Tab Menu */}
+                <div className="flex flex-wrap gap-4 w-full sm:w-auto order-2 sm:order-1">
+                  <p
+                    onClick={() => handleTabClick("All")}
+                    className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm transition-all duration-200 ease-in-out ${activeTab === "All"
+                        ? "border-b-blue-600 text-blue-600 font-semibold"
+                        : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+                      }`}
+                  >
+                    All
+                  </p>
+                  <p
+                    onClick={() => handleTabClick("Makanan")}
+                    className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${activeTab === "Makanan"
+                        ? "border-b-blue-600 text-blue-600 font-semibold"
+                        : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+                      }`}
+                  >
+                    Makanan
+                  </p>
+                  <p
+                    onClick={() => handleTabClick("Minuman")}
+                    className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${activeTab === "Minuman"
+                        ? "border-b-blue-600 text-blue-600 font-semibold"
+                        : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+                      }`}
+                  >
+                    Minuman
+                  </p>
+                </div>
+                <div className="relative w-auto order-1">
+                  {/* Ikon Pencarian */}
+                  <FontAwesomeIcon
+                    icon={faMagnifyingGlass}
+                    className="absolute left-3 top-3 text-gray-400"
+                  />
 
-  {/* Input Pencarian */}
-  <input
-    type="text"
-    placeholder="Cari menu..."
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    className="w-full sm:w-80 pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
-  />
-</div>
-</div>
+                  {/* Input Pencarian */}
+                  <input
+                    type="text"
+                    placeholder="Cari menu..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full sm:w-80 pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
+                  />
+                </div>
+              </div>
 
-</div>
+            </div>
 
-  </div>
+          </div>
 
-          
+
         </div>
       </div>
 
@@ -223,7 +216,7 @@ export default function dashboardPage() {
                         {datamenu.harga.toString()}
                       </p>
                       <FontAwesomeIcon
-                        onClick={()=>{fetchTambahKeKeranjang(getIdUser,datamenu.id,1,datamenu.harga)}}
+                        onClick={() => { fetchTambahKeKeranjang(getIdUser, datamenu.id, 1, datamenu.harga) }}
                         icon={faCartPlus}
                         width={30}
                         height={30}
@@ -266,7 +259,7 @@ export default function dashboardPage() {
       </section>
 
       {/* Membuat modal komponen */}
-      {isBukaModal && selectedMenuId&&getIdUser !== null && (
+      {isBukaModal && selectedMenuId && getIdUser !== null && (
         <div
           onClick={handleOverlayClick}
           className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]"

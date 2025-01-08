@@ -4,43 +4,16 @@ import React from "react";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-blue-600 text-white py-6 px-4">
-        <div className="container mx-auto flex items-center">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <nav className="ml-auto space-x-4">
-            <a
-              href="#"
-              className="text-white hover:underline text-sm font-medium"
-            >
-              Home
-            </a>
-            <a
-              href="#"
-              className="text-white hover:underline text-sm font-medium"
-            >
-              Orders
-            </a>
-            <a
-              href="#"
-              className="text-white hover:underline text-sm font-medium"
-            >
-              Profile
-            </a>
-          </nav>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto py-10">
+    <div className="bg-gray-50 min-h-screen p-4">
+      {/* Wrapper untuk membatasi lebar layout */}
+      <div className="max-w-screen-xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Profile Card */}
           <div className="bg-white shadow rounded-lg p-6">
             <div className="flex items-center space-x-4">
               <img
-                src="https://via.placeholder.com/100"
-                alt="Profile Picture"
+                src=""
+                alt=""
                 className="w-16 h-16 rounded-full"
               />
               <div>
@@ -76,7 +49,7 @@ export default function Page() {
         {/* Recent Orders */}
         <section className="mt-10">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Recent Orders</h3>
-          <div className="bg-white shadow rounded-lg">
+          <div className="bg-white shadow rounded-lg overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="bg-gray-100">
                 <tr>
@@ -108,15 +81,8 @@ export default function Page() {
               </tbody>
             </table>
           </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-4">
-        <div className="container mx-auto text-center">
-          <p className="text-sm">© 2025 My App. All rights reserved.</p>
+        </section>      
         </div>
-      </footer>
     </div>
   );
 }

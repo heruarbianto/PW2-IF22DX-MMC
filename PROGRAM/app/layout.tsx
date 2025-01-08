@@ -4,8 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import MainPage from "./page";  // Mengimpor MainPage
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
