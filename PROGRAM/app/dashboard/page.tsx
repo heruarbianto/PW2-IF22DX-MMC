@@ -15,6 +15,7 @@ import { tambahKeKeranjang } from "../models/modelKeranjang";
 import { getSearchQuery } from "../models/modelSearch"; // Import model
 
 
+
 export default function dashboardPage() {
   //  Buat Hook useState
   const [getMenuReady, setMenuReady] = useState({});
@@ -26,7 +27,6 @@ export default function dashboardPage() {
   const [getIdUser, setidUser] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
-  const [data, setData] = useState([]);
 
   const openModal = (id: number) => {
     setBukaMOdal(true);
@@ -103,9 +103,9 @@ export default function dashboardPage() {
     if (decoded.exp < now || !["PELANGGAN"].includes(decoded.role)) {
       router.push("/forbidden");
     }
-     // Ambil query pencarian dari model
-     const query = getSearchQuery();
-     setSearchQuery(query);
+    //  // Ambil query pencarian dari model
+    //  const query = getSearchQuery();
+    //  setSearchQuery(query);
     // Panggil fungsi fetchData
     fetchAllMenu();
   }, [activeTab,  searchQuery]);
@@ -113,42 +113,66 @@ export default function dashboardPage() {
     <div className="px-10">
       <div className="max-w-screen-md mx-auto">
         <div className="bg-white py-2 px-3">
-          {/* Input Pencarian */}
-          <p>Hasil pencarian: {searchQuery}</p>
+
+          
                              
-                    {/* Tab Menu */}
-          <div className="flex flex-wrap gap-4">
-            <p
-              onClick={() => handleTabClick("All")}
-              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm transition-all duration-200 ease-in-out ${
-                activeTab === "All"
-                  ? "border-b-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-              }`}
-            >
-              All
-            </p>
-            <p
-              onClick={() => handleTabClick("Makanan")}
-              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-                activeTab === "Makanan"
-                  ? "border-b-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-              }`}
-            >
-              Makanan
-            </p>
-            <p
-              onClick={() => handleTabClick("Minuman")}
-              className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-                activeTab === "Minuman"
-                  ? "border-b-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-              }`}
-            >
-              Minuman
-            </p>
-          </div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+
+        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+  {/* Input Pencarian */}
+  
+
+  {/* Tab Menu */}
+  <div className="flex flex-wrap gap-4 w-full sm:w-auto order-2 sm:order-1">
+    <p
+      onClick={() => handleTabClick("All")}
+      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm transition-all duration-200 ease-in-out ${
+        activeTab === "All"
+          ? "border-b-blue-600 text-blue-600 font-semibold"
+          : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+      }`}
+    >
+      All
+    </p>
+    <p
+      onClick={() => handleTabClick("Makanan")}
+      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
+        activeTab === "Makanan"
+          ? "border-b-blue-600 text-blue-600 font-semibold"
+          : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+      }`}
+    >
+      Makanan
+    </p>
+    <p
+      onClick={() => handleTabClick("Minuman")}
+      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ml-30%${
+        activeTab === "Minuman"
+          ? "border-b-blue-600 text-blue-600 font-semibold"
+          : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
+      }`}
+    >
+      Minuman
+    </p>
+  </div>
+  <div className="relative w-auto order-1 ">
+    <input
+      type="text"
+      placeholder="Cari menu..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      className="w-full sm:w-80 pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
+    />
+   
+  </div>
+</div>
+
+</div>
+
+  </div>
+
+          
         </div>
       </div>
 
