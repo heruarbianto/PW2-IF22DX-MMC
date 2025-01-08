@@ -1,63 +1,88 @@
 "use client";
 
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { DetailUser } from "@/app/models/modelUser";
+import { DetailUser, updateUser } from "@/app/models/modelUser";
 import { jwtDecode } from "jwt-decode";
 
-
 export default function Page() {
-
   const [imageError, setImageError] = useState(false);
-  const [getIdUser, setidUser] = useState<number>(0);
-  const [userData, setUserData] = useState<{ namaLengkap: string; email: string } | null>(null);
+  const [getIdUser, setIdUser] = useState<number>(0);
+  const [userData, setUserData] = useState<{ namaLengkap: string; email: string; username?: string; noHp?: string } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState({
+    namaLengkap: "",
+    email: "",
+    username: "",
+    noHp: "",
+  });
 
   const handleLogout = () => {
     document.cookie = "authToken=; path=/; max-age=0; secure; SameSite=Lax"; // Menghapus cookie token
     alert("Anda telah logout!");
     window.location.href = "/"; // Redirect ke halaman utama atau login
   };
-   // BBUat Hook useEffect
-     useEffect(() => {
-       const token = document.cookie
-         .split("; ")
-         .find((row) => row.startsWith("authToken="))
-         ?.split("=")[1];
-       const decoded: { userId: number; role: string; exp: number } = jwtDecode(
-         token as string
-       );
-       const now = Math.floor(Date.now() / 1000);
-       setidUser(decoded.userId);
-   
-       // Ambil detail user berdasarkan userId
-      DetailUser(decoded.userId).then((data) => {
-        if (data && data.length > 0) {
-          setUserData(data[0]);
-        } else {
-          alert("Gagal memuat data pengguna.");
-        }
-      });
-    
-       
-     }, []);
+
+  useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
+    const decoded: { userId: number; role: string; exp: number } = jwtDecode(token as string);
+    setIdUser(decoded.userId);
+
+    // Ambil detail user berdasarkan userId
+    DetailUser(decoded.userId).then((data) => {
+      if (data && data.length > 0) {
+        setUserData(data[0]);
+        setEditData({
+          namaLengkap: data[0].namaLengkap,
+          email: data[0].email,
+          username: data[0].username || "",
+          noHp: data[0].noHp || "",
+        });
+      } else {
+        alert("Gagal memuat data pengguna.");
+      }
+    });
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await updateUser(getIdUser, editData);
+      if (response === "success") {
+        alert("Profil berhasil diperbarui!");
+        setUserData(editData); // Perbarui data di UI
+        setIsModalOpen(false); // Tutup modal
+      } else {
+        alert("Terjadi kesalahan saat memperbarui profil.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Gagal memperbarui profil.");
+    }
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen p-4">
-      {/* Wrapper untuk membatasi lebar layout */}
       <div className="max-w-screen-xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Profile Card */}
           <div className="bg-white shadow rounded-lg p-6">
             <div className="flex items-center space-x-4">
-              {/* Gambar dengan fallback FontAwesome */}
               <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
                 {!imageError && (
                   <img
-                    src="/Tukuyo-Logo.png"
-                    alt="Profile"
+                    src="/Tukuyo-L ogo.png"
+                    alt=""
                     className="w-full h-full object-cover"
-                    onError={() => setImageError(true)} // Tetapkan error jika gambar gagal dimuat
+                    onError={() => setImageError(true)}
                   />
                 )}
                 {imageError && (
@@ -73,6 +98,7 @@ export default function Page() {
               </div>
             </div>
             <button
+              onClick={() => setIsModalOpen(true)}
               className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded">
               Edit Profile
             </button>
@@ -98,8 +124,74 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Recent Orders */}
-        <section className="mt-10">
+        {/* Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Edit Profile</h2>
+              <form>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={editData.username}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                  <input
+                    type="text"
+                    name="namaLengkap"
+                    value={editData.namaLengkap}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={editData.email}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">Nomor HP</label>
+                  <input
+                    type="text"
+                    name="noHp"
+                    value={editData.noHp}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="flex justify-end space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+{/* Recent Orders */}
+<section className="mt-10">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Recent Orders</h3>
           <div className="bg-white shadow rounded-lg overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -149,7 +241,4 @@ export default function Page() {
     </div>
   );
 };
-function fetchAllMenu() {
-  throw new Error("Function not implemented.");
-}
 

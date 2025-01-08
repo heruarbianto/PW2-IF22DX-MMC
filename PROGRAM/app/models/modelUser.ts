@@ -82,3 +82,23 @@ export const DetailUser= async(idMenuParameter: number)=>{
   })
   return user;
 }
+
+export const updateUser = async (userId: number, updatedData: any) => {
+  const { namaLengkap, email, username, noHp } = updatedData;
+
+  try {
+    await prisma.tb_user.update({
+      where: { id: userId },
+      data: {
+        namaLengkap,
+        email,
+        username,
+        noHp,
+      },
+    });
+    return "success";
+  } catch (error) {
+    console.error(error);
+    return "error";
+  }
+};
