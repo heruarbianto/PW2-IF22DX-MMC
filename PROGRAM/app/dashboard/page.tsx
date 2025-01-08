@@ -147,7 +147,7 @@ export default function dashboardPage() {
     </p>
     <p
       onClick={() => handleTabClick("Minuman")}
-      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ml-30%${
+      className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
         activeTab === "Minuman"
           ? "border-b-blue-600 text-blue-600 font-semibold"
           : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
@@ -156,16 +156,22 @@ export default function dashboardPage() {
       Minuman
     </p>
   </div>
-  <div className="relative w-auto order-1 ">
-    <input
-      type="text"
-      placeholder="Cari menu..."
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      className="w-full sm:w-80 pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
-    />
-   
-  </div>
+  <div className="relative w-auto order-1">
+  {/* Ikon Pencarian */}
+  <FontAwesomeIcon
+    icon={faMagnifyingGlass}
+    className="absolute left-3 top-3 text-gray-400"
+  />
+
+  {/* Input Pencarian */}
+  <input
+    type="text"
+    placeholder="Cari menu..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    className="w-full sm:w-80 pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none transition-all"
+  />
+</div>
 </div>
 
 </div>
