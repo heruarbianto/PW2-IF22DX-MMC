@@ -5,14 +5,12 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [searchQuery, setSearchQuery] = useState("");  // Menambahkan state searchQuery
   const pathname = usePathname();
   // Daftar halaman yang memerlukan navbar
   const pagesWithNavbar = ["/"];
@@ -37,7 +35,7 @@ export default function MainLayout({
           {/* Navbar hanya tampil jika showNavbar adalah true */}
           {showNavbar && (
 
-            <nav className="bg-white dark:bg-gray-800 antialiased">
+            <nav className="bg-white dark:bg-gray-800 antialiased z-50">
               <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
                 <div className="flex items-center justify-between">
                   {/* Logo  */}
@@ -84,8 +82,6 @@ export default function MainLayout({
             </nav>
           )}
         </header>
-         {/* Mengirimkan searchQuery dan setSearchQuery ke MainPage */}
-        {/* <MainPage searchQuery={searchQuery} setSearchQuery={setSearchQuery} /> */}
 
         {/* Area content */}
         {children}
