@@ -21,7 +21,7 @@ export default function MainPage() {
 
         <div className="flex gap-4">
           <button className="px-6 py-3 bg-white text-black font-semibold rounded-md shadow-md hover:bg-gray-100">
-            Explore Menu
+            How To Order
           </button>
           <button className="px-6 py-3 bg-transparent border border-white text-white font-semibold rounded-md shadow-md hover:bg-white hover:text-black">
             Order Now
