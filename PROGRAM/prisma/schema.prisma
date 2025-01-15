@@ -87,6 +87,7 @@ model tb_pemesanan{
   idUser Int @db.Int
   idMeja Int @db.Int
   metode metode_pembayaran @default(COD)
+  pajak String @db.VarChar(10)
   total Int @db.Int
   status status_pemesanan @default(MENUNGGUPEMBAYARAN)
   createdAt DateTime @default(now())
@@ -99,8 +100,7 @@ model detail_pemesanan {
   id            Int          @id @default(autoincrement())
   idPemesanan   Int          @db.Int
   idKeranjang   Int          @db.Int
-  jumlah        Int          @db.Int
-  harga         Int          @db.Int
+  note String @db.Text
   createdAt     DateTime     @default(now())
   pemesanan     tb_pemesanan @relation(fields: [idPemesanan], references: [id], onDelete: Cascade, onUpdate: Cascade)
   keranjang     tb_keranjang @relation(fields: [idKeranjang], references: [id], onDelete: Cascade, onUpdate: Cascade)

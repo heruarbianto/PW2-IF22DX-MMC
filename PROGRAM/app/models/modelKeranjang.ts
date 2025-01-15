@@ -141,4 +141,18 @@ export const tambahUpdate = async (
     });// tambah item ke keranjang
     }
 };
+
+
+ // Buat fungsi tambah plus Keranjang
+ export const updateSetelahDipesan = async (idKeranjang: number[]) => {
+  await Promise.all(
+    idKeranjang.map((id) =>
+      prisma.tb_keranjang.updateMany({
+        where: { id },
+        data: { status: 'TRUE' },
+      })
+    )
+  );
+};
+
    

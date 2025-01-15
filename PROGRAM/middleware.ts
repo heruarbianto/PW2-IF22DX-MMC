@@ -31,7 +31,7 @@ export async function middleware(req: NextRequest) {
 
     const role = (payload as { role: string }).role;
 
-    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/login') {
+    if (req.nextUrl.pathname === '/'|| req.nextUrl.pathname === '/') {
       if (role === 'ADMIN') {
         return NextResponse.redirect(new URL('/dashboardadmin', req.url));
       } else if (role === 'PELANGGAN') {
