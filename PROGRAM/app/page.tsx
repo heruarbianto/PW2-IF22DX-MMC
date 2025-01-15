@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 export default function MainPage() {
 
   return (
-    <div className="relative max-w-screen-xl h-screen">
+    <div className="relative w-full h-screen">
         <img
         className="h-full w-full object-cover"
         src="/backgroundLandingPage1.jpg"
