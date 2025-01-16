@@ -87,6 +87,7 @@ model tb_pemesanan{
   idUser Int @db.Int
   idMeja Int @db.Int
   metode metode_pembayaran @default(COD)
+  totalProduk Int @db.Int
   pajak String @db.VarChar(10)
   total Int @db.Int
   status status_pemesanan @default(MENUNGGUPEMBAYARAN)

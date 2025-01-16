@@ -16,7 +16,8 @@ export const buatPesanan = async (
     idUserparameter: number,
     idMejaparameter: number,
     metodepembayaran: string,
-    totalparameter: number
+    totalparameter: number,
+    totalProdukparameter:number
   ): Promise<number> => {
     try {
       // Validasi input
@@ -36,6 +37,7 @@ export const buatPesanan = async (
           metode: metodepembayaran as 'COD' || 'ePayment',
           pajak: '11%', // Pajak dalam bentuk desimal
           total: totalparameter,
+          totalProduk: totalProdukparameter
         },
       });
   
@@ -86,12 +88,13 @@ export const prosesPesanan = async (
     metodePembayaran: string,
     total: number,
     idKeranjang: number[], // Menyertakan keranjang untuk detail pesanan
-    notesParameter: Record<number, string>
+    notesParameter: Record<number, string>,
+    totalProduk:number
 
   ): Promise<{ success: boolean; message: string }> => {
     try {
       // Membuat pesanan terlebih dahulu
-      const idPesanan = await buatPesanan(idUser, idMeja, metodePembayaran, total);
+      const idPesanan = await buatPesanan(idUser, idMeja, metodePembayaran, total,totalProduk);
       // Validasi jika pesanan gagal dibuat
       if (idPesanan === 0) {
         throw new Error('Gagal membuat pesanan utama. Proses dihentikan.');

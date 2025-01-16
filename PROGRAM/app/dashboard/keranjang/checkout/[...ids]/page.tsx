@@ -8,6 +8,9 @@ import {
 } from "@/app/models/modelKeranjang";
 import { DetailUser } from "@/app/models/modelUser";
 import { getAllMeja, prosesPesanan } from "@/app/models/modelPemesanan";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons/faCircleExclamation";
+import { useRouter } from "next/navigation";
 export default function pageCheckout({
   params,
 }: {
@@ -22,6 +25,9 @@ export default function pageCheckout({
   const [getIdMeja, setIdMeja] = useState(Number);
   const [getIdUser, setIdUser] = useState(Number);
   const [notes, setnote] = useState<Record<number, string>>({});
+  const [isModalValidation, setIsModalValidaton] = useState(false)
+  const [isModalLoading, setIsModalLoading] = useState(false)
+  const router = useRouter();
 
   const [getMetode, setMetode] = useState("");
 
@@ -94,25 +100,35 @@ export default function pageCheckout({
     metodePembayaran: string,
     totalParameter: number,
     keranjangID: number[],
-    notesParameter: Record<number, string>
+    notesParameter: Record<number, string>,
+    totalProdukparameter:number
   ) => {
-    const result = await prosesPesanan(
-      idUserParameter,
-      idMejaParameter,
-      metodePembayaran,
-      totalParameter,
-      keranjangID,
-      notesParameter
-    );
+    if(!getMetode||!getMeja){
+      setIsModalValidaton(true)
+    }else{
+      setIsModalLoading(true)
+      const result = await prosesPesanan(
+        idUserParameter,
+        idMejaParameter,
+        metodePembayaran,
+        totalParameter,
+        keranjangID,
+        notesParameter,
+        totalProdukparameter
+      );
 
-    if (result.success) {
-      await updateSetelahDipesan(keranjangID);
-      console.log(result.message); // Pesanan berhasil diproses
-    } else {
-      console.error(result.message); // Menampilkan error
-    }
+      if (result.success) {
+        await updateSetelahDipesan(keranjangID);
+        console.log(result.message); // Pesanan berhasil diproses
+        localStorage.setItem("pesananSuccess", "true");
+        router.push('/dashboard/profile')
+      } else {
+        console.error(result.message); // Menampilkan error
+      }
+      setIsModalLoading(false)
   };
-
+}
+  
   return (
     <div className="bg-gray-50 min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg">
@@ -250,7 +266,7 @@ export default function pageCheckout({
               <option value={""}>--Pilih Pembayaran--</option>
 
               <option value="COD">Bayar di Tempat (COD)</option>
-              <option value="ePayment">ePayment(tahap pengembangan)</option>
+              <option  disabled value="ePayment">ePayment(tahap pengembangan)</option>
             </select>
             <div className="flex justify-between items-center mt-5">
               <p className="text-sm text-gray-700">Total Produk:</p>
@@ -285,7 +301,8 @@ export default function pageCheckout({
                 getMetode,
                 totalPrice,
                 idsArray,
-                notes
+                notes,
+                totalProduk
               )
             }
             disabled={!getIdMeja || !getMetode} // Tombol nonaktif jika salah satu tidak dipilih
@@ -294,6 +311,32 @@ export default function pageCheckout({
           </button>
         </div>
       </div>
+
+      {isModalValidation && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-800 bg-opacity-50" onClick={()=>setIsModalValidaton(false)}>
+                    <div className="relative p-4 w-full max-w-md max-h-full" >
+                        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                            <div className="p-4 md:p-5 text-center">
+                              <FontAwesomeIcon icon={faCircleExclamation} className="text text-red-500 text-xl"></FontAwesomeIcon>
+                                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Harap pilih Meja/ Metode Pembayaran</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+{isModalLoading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-800 bg-opacity-50">
+                <div className="relative p-4 w-full max-w-md max-h-full">
+                    <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <div className="p-4 md:p-5 text-center">
+                        <span className="loading loading-ring loading-lg text-blue-600"></span>
+                            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Sedang Membuat Pesanan...</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            )}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faSignOutAlt, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { DetailUser, updateUser } from "@/app/models/modelUser";
 import { jwtDecode } from "jwt-decode";
 
@@ -11,6 +11,8 @@ export default function Page() {
   const [getIdUser, setIdUser] = useState<number>(0);
   const [userData, setUserData] = useState<{ namaLengkap: string; email: string; username?: string; noHp?: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalPesanan, setIsModalPesanan] = useState(false);
+
   const [editData, setEditData] = useState({
     namaLengkap: "",
     email: "",
@@ -46,6 +48,12 @@ export default function Page() {
         alert("Gagal memuat data pengguna.");
       }
     });
+
+    if (localStorage.getItem("pesananSuccess") === "true") {
+      setIsModalPesanan(true);
+      localStorage.removeItem("pesananSuccess");
+      setTimeout(() => setIsModalPesanan(false), 3000);
+    }
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,6 +246,15 @@ export default function Page() {
           </button>
         </div>
       </div>
+
+      {isModalPesanan && (
+      <div id="toast-default" className="flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
+    <div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-blue-500 bg-blue-100 rounded-lg dark:bg-blue-800 dark:text-blue-200">
+        <FontAwesomeIcon icon={faCheckCircle}></FontAwesomeIcon>
+    </div>
+    <div className="ms-3 text-sm font-normal">Pesanan Berhasil Dibuat, Silakan Lakukan Pembayaran</div>
+</div>
+    )}
     </div>
   );
 };

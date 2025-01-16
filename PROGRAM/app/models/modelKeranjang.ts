@@ -30,6 +30,7 @@ export const keranjangPemesanan = async (keranjangIds: number[], idUserParameter
         in: keranjangIds, // Memastikan ID keranjang termasuk dalam array yang diberikan
       },
       idUser: idUserParameter, // Memastikan keranjang sesuai dengan idUser
+      status: 'FALSE'
     },
     include: {
       menu: true, // Fetch data menu
@@ -107,7 +108,7 @@ export const tambahUpdate = async (
       }
     });
     // Menggunakan find untuk mencari Keranjang berdasarkan idUser dan IdMenu
-    const idUSerMenuFound = dataKeranjang.find((cart) => cart.idUser === idUserParameter && cart.idMenu=== idMenuParameter);
+    const idUSerMenuFound = dataKeranjang.find((cart) => cart.idUser === idUserParameter && cart.idMenu=== idMenuParameter && cart.status==="FALSE");
     
 
     //Jika ada ditemukan keranjang dengan item idUser dan IdMenu yang sama maka update item di keranjang
