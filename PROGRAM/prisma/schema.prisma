@@ -92,6 +92,7 @@ model tb_pemesanan{
   total Int @db.Int
   status status_pemesanan @default(MENUNGGUPEMBAYARAN)
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   user tb_user @relation(fields: [idUser], references: [id], onDelete: Cascade, onUpdate: Cascade)
   meja tb_meja @relation(fields: [idMeja], references: [id], onDelete: Cascade, onUpdate: Cascade)
   pemesanan detail_pemesanan[]
