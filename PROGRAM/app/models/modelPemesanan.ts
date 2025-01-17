@@ -1,16 +1,57 @@
 "use server";
 import {PrismaClient} from "@prisma/client";
-import { updateSetelahDipesan } from "./modelKeranjang";
 
 const prisma = new PrismaClient();
 
-// fungsi untuk menampilkan semua menu
+// fungsi untuk menampilkan semua meja
 export const getAllMeja = async () => {
     // Membuat Variabel menu
     const meja = await prisma.tb_meja.findMany({});
     return meja;
   };
 
+  // fungsi untuk menampilkan semua pesanan
+export const getAllPesanan = async (idUserParameter:number) => {
+  // Membuat Variabel menu
+  const pesanan = await prisma.tb_pemesanan.findMany({
+    where:{
+      idUser: idUserParameter
+    }
+  });
+  return pesanan;
+};
+
+  // fungsi untuk menampilkan semua pesanan selesai
+  export const getPesananSelesai = async (idUserParameter:number) => {
+    // Membuat Variabel menu
+    const pesanan = await prisma.tb_pemesanan.findMany({
+      where:{
+        idUser: idUserParameter,
+        status: 'SELESAI'
+      }
+    });
+    return pesanan;
+  };
+
+export const getAllDetailPesanan = async (idUserParameter:number) => {
+  
+  const idPesananArr = Object.values(await getPesananSelesai(idUserParameter)).map((pesanan:any)=>{
+    return pesanan.id
+  })
+
+  // console.log(idPesananArr)
+  const pesanan = await prisma.detail_pemesanan.findMany({
+    where:{
+      idPemesanan:{
+        in: idPesananArr
+      }
+    },
+    include:{
+      keranjang: true
+    }
+  });
+  return pesanan;
+};
   // Fungsi untuk membuat pesanan
 export const buatPesanan = async (
     idUserparameter: number,
@@ -111,4 +152,6 @@ export const prosesPesanan = async (
       return { success: false, message: error.message };
     }
   };
+
+
   
