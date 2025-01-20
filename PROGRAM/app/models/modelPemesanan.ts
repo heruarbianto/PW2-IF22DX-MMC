@@ -154,4 +154,31 @@ export const prosesPesanan = async (
   };
 
 
-  
+    // fungsi untuk menampilkan Pesanan by Id
+export const getPesananbyId = async (idPesananParameter:number) => {
+  // Membuat Variabel menu
+  const pesanan = await prisma.tb_pemesanan.findMany({
+    where:{
+      id: idPesananParameter
+    }
+  });
+  return pesanan;
+};
+
+    // fungsi untuk menampilkan Detail Pesanan by id Pemesanan
+    export const getDetailPesananbyId = async (idPemesananParameter:number) => {
+      // Membuat Variabel menu
+      const detail = await prisma.detail_pemesanan.findMany({
+        where:{
+          idPemesanan: idPemesananParameter
+        },
+        include:{
+          keranjang: {
+            include: {
+              menu: true
+            }
+          }
+        }
+      });
+      return detail;
+    };

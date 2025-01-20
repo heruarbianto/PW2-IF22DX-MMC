@@ -13,10 +13,15 @@ import {
   getAllDetailPesanan,
   getAllPesanan,
 } from "@/app/models/modelPemesanan";
+import Receipt from "@/app/modal/receipt";
 
 export default function Page() {
   const [imageError, setImageError] = useState(false);
   const [getIdUser, setIdUser] = useState<number>(0);
+  const [getPesananId, setPesananId] = useState<number>(0);
+  const [getUserId, setUserId] = useState<number>(0);
+
+
   const [userData, setUserData] = useState<{
     namaLengkap: string;
     email: string;
@@ -27,7 +32,7 @@ export default function Page() {
   const [isModalPesanan, setIsModalPesanan] = useState(false);
   const [getListPesanan, setListPesanan] = useState({});
   const [getAllDetailpesanan, setAllDetailpesanan] = useState({});
-
+  const [isBukaModalDetailPesanan, SetisBukaModalDetailPesanan] = useState(false)
   // Tentukan warna berdasarkan status
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -80,6 +85,7 @@ export default function Page() {
         alert("Gagal memuat data pengguna.");
       }
     });
+    setUserId(decoded.userId);
     fetchListPesanan(decoded.userId);
     fetchListDetail(decoded.userId);
     if (localStorage.getItem("pesananSuccess") === "true") {
@@ -163,7 +169,18 @@ export default function Page() {
       alert("Gagal memperbarui profil.");
     }
   };
+  const openModalDetailPesanan = (id: number) => {
+    SetisBukaModalDetailPesanan(true);
+    setPesananId(id);
+  };
 
+   // Fungsi untuk menangani klik di luar modal (untuk menutup modal)
+   const handleOverlayClick = (e: React.MouseEvent) => {
+    // Cek apakah klik terjadi di luar konten modal
+    if (e.target === e.currentTarget) {
+      SetisBukaModalDetailPesanan(false)
+    }
+  };
   return (
     <div className="bg-gray-50 min-h-screen p-4">
       <div className="max-w-screen-xl mx-auto">
@@ -174,7 +191,7 @@ export default function Page() {
               <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
                 {!imageError && (
                   <img
-                    src="/Tukuyo-L ogo.png"
+                    src="/Tukuyo-Logo.png"
                     alt=""
                     className="w-full h-full object-cover"
                     onError={() => setImageError(true)}
@@ -318,7 +335,7 @@ export default function Page() {
               <tbody>
                 {Object.values(getListPesanan)?.map(
                   (pesanan: any, index: number) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
+                    <tr key={index} onClick={()=>openModalDetailPesanan(pesanan.id)} className="border-b hover:bg-gray-50">
                       <td className="p-4">#{pesanan.id}</td>
                       <td className="p-4">
                         {pesanan.createdAt.toDateString().substring(4)}
@@ -375,6 +392,24 @@ export default function Page() {
           </div>
           <div className="ms-3 text-sm font-normal">
             Pesanan Berhasil Dibuat, Silakan Lakukan Pembayaran
+          </div>
+        </div>
+      )}
+
+{isBukaModalDetailPesanan && getPesananId && getUserId !== null && (
+        <div
+          onClick={handleOverlayClick}
+          className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]"
+        >
+          <div className="shadow-lg rounded-lg p-6 relative">
+            {/* <div className="flex justify-end"> */}
+              {/* <FontAwesomeIcon
+                icon={faXmark}
+                className="ml-auto mb-2"
+                onClick={closeModal}
+              ></FontAwesomeIcon> */}
+            {/* </div> */}
+            <Receipt idPesanan={getPesananId} UserId={getIdUser}></Receipt>
           </div>
         </div>
       )}

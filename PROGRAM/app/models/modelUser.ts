@@ -68,10 +68,10 @@ export const LoginUser= async (
   return token;
 };
 
-export const DetailUser= async(idMenuParameter: number)=>{
+export const DetailUser= async(idUserParameter: number)=>{
   const user = await prisma.tb_user.findMany({
     where: {
-      id : idMenuParameter
+      id : idUserParameter
     },
     select:{
       namaLengkap:true,

@@ -24,6 +24,7 @@ export default function dashboardPage() {
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
   const [loading, setLoading] = useState(true);
   const [getIdUser, setidUser] = useState<number>(0);
+
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
