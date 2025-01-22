@@ -12,6 +12,10 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      screens: {
+        'xs': '480px', // Tambahkan breakpoint untuk layar sangat kecil
+        '3xl': '1920px', // Tambahkan breakpoint untuk layar ekstra besar
+      },
       spacing :{
         "1px"  : "1px",
         "5px"  : "5px",

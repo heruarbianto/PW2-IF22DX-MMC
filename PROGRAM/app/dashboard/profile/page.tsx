@@ -6,6 +6,7 @@ import {
   faUserCircle,
   faSignOutAlt,
   faCheckCircle,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { DetailUser, updateUser } from "@/app/models/modelUser";
 import { jwtDecode } from "jwt-decode";
@@ -181,6 +182,10 @@ export default function Page() {
       SetisBukaModalDetailPesanan(false)
     }
   };
+  const closeModal = () => {
+    SetisBukaModalDetailPesanan(false);
+  };
+  
   return (
     <div className="bg-gray-50 min-h-screen p-4">
       <div className="max-w-screen-xl mx-auto">
@@ -398,18 +403,11 @@ export default function Page() {
 
 {isBukaModalDetailPesanan && getPesananId && getUserId !== null && (
         <div
-          onClick={handleOverlayClick}
+        onClick={handleOverlayClick}
           className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]"
         >
           <div className="shadow-lg rounded-lg p-6 relative">
-            {/* <div className="flex justify-end"> */}
-              {/* <FontAwesomeIcon
-                icon={faXmark}
-                className="ml-auto mb-2"
-                onClick={closeModal}
-              ></FontAwesomeIcon> */}
-            {/* </div> */}
-            <Receipt idPesanan={getPesananId} UserId={getIdUser}></Receipt>
+            <Receipt idPesanan={getPesananId} UserId={getIdUser} onCloseModal={()=>closeModal()}></Receipt>
           </div>
         </div>
       )}

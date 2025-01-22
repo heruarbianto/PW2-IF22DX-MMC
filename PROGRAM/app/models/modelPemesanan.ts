@@ -182,3 +182,33 @@ export const getPesananbyId = async (idPesananParameter:number) => {
       });
       return detail;
     };
+
+    export const batalkanPesananOtomatis = async () => {
+      try {
+        // Hitung waktu 24 jam yang lalu
+        const batasWaktu = new Date();
+        batasWaktu.setHours(batasWaktu.getHours() - 24);
+    
+        // Cari pesanan yang memenuhi syarat
+        const pesananYangDibatalkan = await prisma.tb_pemesanan.updateMany({
+          where: {
+            status: "MENUNGGUPEMBAYARAN",
+            createdAt: {
+              lt: batasWaktu,
+            },
+          },
+          data: {
+            status: "DIBATALKAN",
+          },
+        });
+    
+        console.log(
+          `${pesananYangDibatalkan.count} pesanan telah dibatalkan secara otomatis.`
+        );
+      } catch (error: any) {
+        console.error("Gagal membatalkan pesanan secara otomatis:", error.message);
+      }
+    };
+    
+    // Jalankan fungsi secara periodik setiap 30 detik
+    setInterval(batalkanPesananOtomatis, 30000);

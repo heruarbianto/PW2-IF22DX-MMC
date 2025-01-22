@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { getDetailPesananbyId, getPesananbyId } from "../models/modelPemesanan";
 import { DetailUser } from "../models/modelUser";
+import Link from "next/link";
 
 interface IdProps {
   idPesanan: number; // Tambahkan properti id
   UserId: number;
+  onCloseModal: () => void;
 }
-export default function receipt({ idPesanan, UserId }: IdProps) {
+export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
   const [getPesananByid, setPesananByid] = useState({});
   const [getAllDetailpesanan, setAllDetailpesanan] = useState({});
   const [getDetailUser, setDetailUser] = useState({});
@@ -23,29 +25,35 @@ export default function receipt({ idPesanan, UserId }: IdProps) {
 
   // console.log(getAllDetailpesanan)
   // console.log(getPesananByid)
-  const status = Object.values(getPesananByid).map(((pesanan:any)=>pesanan.status))[0]
+  const status = Object.values(getPesananByid).map(
+    (pesanan: any) => pesanan.status
+  )[0];
   return (
     <div className="min-h-screen py-6 flex flex-col justify-center sm:py-12">
       <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-          <div className="mb-4 p-0 text-end">
-          <p
-            className={`text-sm font-medium px-4 py-2 rounded-full inline-block ${
-              status === "SELESAI"
-                ? "text-green-600 bg-green-100"
-                : status === "DIPROSES"
-                ? "text-blue-600 bg-blue-100"
-                : status === "MENUNGGUPEMBAYARAN"
-                ? "text-yellow-600 bg-yellow-100"
-                : status === "DIBATALKAN"
-                ? "text-red-600 bg-red-100"
-                : "text-gray-600 bg-gray-100"
-            }`}
-          >
-            {status || "Status Tidak Diketahui"}
-          </p>
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl hidden sm:block"></div>
+        <div className="relative px-4 py-6 bg-white shadow-lg rounded-lg sm:rounded-3xl sm:px-20 sm:py-20">
+          <div className="mb-4 p-0 flex justify-between items-center">
+            <Link href=""className="text-start text-red-500 font-semibold" onClick={onCloseModal}>Tutup</Link>
+            <div className="text-end">
+              <p
+                className={`text-sm font-medium px-4 py-2 rounded-full inline-block ${
+                  status === "SELESAI"
+                    ? "text-green-600 bg-green-100"
+                    : status === "DIPROSES"
+                    ? "text-blue-600 bg-blue-100"
+                    : status === "MENUNGGUPEMBAYARAN"
+                    ? "text-yellow-600 bg-yellow-100"
+                    : status === "DIBATALKAN"
+                    ? "text-red-600 bg-red-100"
+                    : "text-gray-600 bg-gray-100"
+                }`}
+              >
+                {status || "Status Tidak Diketahui"}
+              </p>
+            </div>
           </div>
+
           <div className="max-w-md mx-auto">
             <div className="flex items-center justify-between mb-8">
               <img src="/Tukuyo-Logo.png" alt="Company Logo" className="h-12" />
