@@ -11,8 +11,8 @@ import { DetailUser, updateUser } from "@/app/models/modelUser";
 import { jwtDecode } from "jwt-decode";
 import {
     getAllDetailPesanan,
-    getAllPesanan,
     getAllPesananNoFilter,
+    getPesananHariIni,
 } from "@/app/models/modelPemesanan";
 import Receipt from "@/app/modal/receiptkasir";
 
@@ -104,7 +104,7 @@ export default function Page() {
     };
 
     const fetchListPesanan = async () => {
-        setListPesanan(await getAllPesananNoFilter());
+        setListPesanan(await getPesananHariIni());
     };
 
     const fetchListDetail = async (idUser: number) => {

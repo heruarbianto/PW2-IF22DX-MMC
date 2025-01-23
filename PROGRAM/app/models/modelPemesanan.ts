@@ -1,5 +1,6 @@
 "use server";
 import {PrismaClient} from "@prisma/client";
+import { startOfDay, endOfDay } from "date-fns";
 
 const prisma = new PrismaClient();
 
@@ -19,6 +20,22 @@ export const getAllPesanan = async (idUserParameter:number) => {
     }
   });
   return pesanan;
+};
+export const getPesananHariIni = async () => {
+  // Mendapatkan waktu mulai dan selesai dari hari ini
+  const todayStart = startOfDay(new Date());
+  const todayEnd = endOfDay(new Date());
+
+  const pesananHariIni = await prisma.tb_pemesanan.findMany({
+    where: {
+      createdAt: {
+        gte: todayStart, // Setelah atau sama dengan awal hari ini
+        lte: todayEnd,   // Sebelum atau sama dengan akhir hari ini
+      },
+    },
+  });
+
+  return pesananHariIni;
 };
 
 // Backend: Fungsi getAllPesanan tanpa filter
