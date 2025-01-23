@@ -1,11 +1,12 @@
 "use client";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 export default function MainPage() {
 
   return (
     <div className="relative w-full h-screen">
-        <img
+      <img
         className="h-full w-full object-cover"
         src="/backgroundLandingPage1.jpg"
         alt=""
@@ -23,11 +24,13 @@ export default function MainPage() {
           <button className="px-6 py-3 bg-white text-black font-semibold rounded-md shadow-md hover:bg-gray-100">
             How To Order
           </button>
-          <button className="px-6 py-3 bg-transparent border border-white text-white font-semibold rounded-md shadow-md hover:bg-white hover:text-black">
-            Order Now
-          </button>
+          <Link href="/login">
+            <button className="px-6 py-3 bg-transparent border border-white text-white font-semibold rounded-md shadow-md hover:bg-white hover:text-black">
+              Order Now
+            </button>
+          </Link>
         </div>
       </div>
-      </div>
+    </div>
   );
 }
