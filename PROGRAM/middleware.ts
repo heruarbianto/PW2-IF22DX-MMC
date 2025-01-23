@@ -36,6 +36,8 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/dashboardadmin', req.url));
       } else if (role === 'PELANGGAN') {
         return NextResponse.redirect(new URL('/dashboard', req.url));
+      } else if (role === 'KASIR') {
+        return NextResponse.redirect(new URL('/dashboardkasir', req.url));
       }
     }
 
@@ -49,18 +51,26 @@ export async function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
+    // Kasir hanya bisa mengakses sub-path dashboard pelanggan
+    if (role === 'KASIR' && req.nextUrl.pathname.startsWith('/dashboardkasir')) {
+      return NextResponse.next();
+    }
+
     // Redirect admin ke dashboard admin jika mereka mencoba mengakses dashboard pelanggan
-    if (role === 'ADMIN' && req.nextUrl.pathname.startsWith('/dashboard')) {
+    if (role === 'ADMIN' && req.nextUrl.pathname.startsWith('/dashboard')||req.nextUrl.pathname.startsWith('/dashboardkasir')) {
       return NextResponse.redirect(new URL('/dashboardadmin', req.url));
     }
 
     // Redirect pelanggan ke dashboard jika mereka mencoba mengakses dashboard admin
-    if (role === 'PELANGGAN' && req.nextUrl.pathname.startsWith('/dashboardadmin')) {
+    if (role === 'PELANGGAN' && req.nextUrl.pathname.startsWith('/dashboardadmin')||req.nextUrl.pathname.startsWith('/dashboardkasir')) {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
-
+   // Redirect pelanggan ke dashboard jika mereka mencoba mengakses dashboard admin
+    if (role === 'PELANGGAN' && req.nextUrl.pathname.startsWith('/dashboardadmin')||req.nextUrl.pathname.startsWith('/dashboard')) {
+      return NextResponse.redirect(new URL('/dashboardkasir', req.url));
+    }
     // Jika role tidak valid atau tidak dikenali, redirect ke halaman forbidden
-    else if (!['ADMIN', 'PELANGGAN'].includes(role)) {
+    else if (!['ADMIN', 'PELANGGAN','KASIR'].includes(role)) {
       return NextResponse.redirect(new URL('/forbidden', req.url));
     }
   } catch (error) {
@@ -77,7 +87,9 @@ export const config = {
     '/dashboardadmin', 
     '/dashboardadmin/:path*', 
     '/dashboard', 
-    '/dashboard/:path*', 
+    '/dashboard/:path*',
+    '/dashboardkasir', 
+    '/dashboardkasir/:path*', 
     '/modal', 
     '/login',
   ],
