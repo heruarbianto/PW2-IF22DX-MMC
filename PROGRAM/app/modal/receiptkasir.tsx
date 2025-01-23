@@ -48,7 +48,7 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
 
 
   useEffect(() => {
-    fetchGetDetailPesanan();
+    fetchGetDetailPesanan(); 
   }, []);
 
   useEffect(() => {

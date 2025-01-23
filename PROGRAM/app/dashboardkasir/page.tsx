@@ -11,7 +11,6 @@ import { DetailUser, updateUser } from "@/app/models/modelUser";
 import { jwtDecode } from "jwt-decode";
 import {
     getAllDetailPesanan,
-    getAllPesananNoFilter,
     getPesananHariIni,
 } from "@/app/models/modelPemesanan";
 import Receipt from "@/app/modal/receiptkasir";
@@ -56,6 +55,7 @@ export default function Page() {
         username: "",
         noHp: "",
     });
+
 
     const handleLogout = () => {
         document.cookie = "authToken=; path=/; max-age=0; secure; SameSite=Lax"; // Menghapus cookie token
@@ -208,26 +208,41 @@ export default function Page() {
                     </div>
 
                     {/* Statistics */}
-                    <div className="col-span-2 bg-white shadow rounded-lg p-6">
-                        <h3 className="text-lg font-semibold text-gray-800">Statistics</h3>
-                        <div className="grid grid-cols-3 gap-4 mt-4">
-                            <div className="bg-blue-100 text-blue-700 p-4 rounded text-center">
-                                <p className="text-2xl font-bold">
+                    <div className="col-span-2 bg-white shadow-lg rounded-lg p-6">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Statistics</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {/* Belum Bayar */}
+                            <div className="bg-blue-100 text-blue-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center">
+                                <p className="text-3xl font-bold">
+                                    {Object.keys(getListPesanan).filter((key) => (getListPesanan as any)[key].status === 'MENUNGGUPEMBAYARAN').length}
+                                </p>
+                                <p className="text-sm">Belum Bayar</p>
+                            </div>
+                            {/* Selesai */}
+                            <div className="bg-green-100 text-green-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center">
+                                <p className="text-3xl font-bold">
                                     {Object.keys(getListPesanan).filter((key) => (getListPesanan as any)[key].status === 'SELESAI').length}
                                 </p>
-                                <p className="text-sm">Orders</p>
+                                <p className="text-sm">Selesai</p>
                             </div>
-                            <div className="bg-green-100 text-green-700 p-4 rounded text-center">
-                                <p className="text-2xl font-bold">{totalQuantity}</p>
-                                <p className="text-sm">Quantity</p>
+                            {/* Diproses */}
+                            <div className="bg-yellow-100 text-yellow-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center">
+                                <p className="text-3xl font-bold">
+                                    {Object.keys(getListPesanan).filter((key) => (getListPesanan as any)[key].status === 'DIPROSES').length}
+                                </p>
+                                <p className="text-sm">Diproses</p>
                             </div>
-                            <div className="bg-yellow-100 text-yellow-700 p-4 rounded text-center">
-                                <p className="text-2xl font-bold">{formatNumber(totalPembelian)}</p>
-                                <p className="text-sm">Pengeluaran</p>
+                            {/* Total Pendapatan */}
+                            <div className="bg-gray-100 text-gray-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center">
+                                <p className="text-3xl font-bold">
+                                    Rp. {formatNumber(totalPembelian)}
+                                </p>
+                                <p className="text-sm">Pendapatan</p>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 {/* Modal */}
                 {isModalOpen && (
