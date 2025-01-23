@@ -12,6 +12,7 @@ import { jwtDecode } from "jwt-decode";
 import {
     getAllDetailPesanan,
     getAllPesanan,
+    getAllPesananNoFilter,
 } from "@/app/models/modelPemesanan";
 import Receipt from "@/app/modal/receiptkasir";
 
@@ -86,7 +87,7 @@ export default function Page() {
             }
         });
         setUserId(decoded.userId);
-        fetchListPesanan(decoded.userId);
+        fetchListPesanan();
         fetchListDetail(decoded.userId);
         if (localStorage.getItem("pesananSuccess") === "true") {
             setIsModalPesanan(true);
@@ -102,31 +103,14 @@ export default function Page() {
         setEditData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const fetchListPesanan = async (idUser: number) => {
-        setListPesanan(await getAllPesanan(idUser));
+    const fetchListPesanan = async () => {
+        setListPesanan(await getAllPesananNoFilter());
     };
-    // console.log(idArray)
-
-    // const idArray =(getListPesanan:{})=>{
-    // const idpemesanan =  Object.values(getListPesanan).map((pesanan: any) => {
-    //     // console.log(pesanan.id); // Debugging untuk melihat id setiap pesanan
-    //     return pesanan.id;
-    //   });
-    //   idpemesanan
-    // }
-    // useEffect(() => {
-    //   console.log(idArray)
-    //   fetchListDetail(idArray())
-    // }, [])
-
-    // console.log(idArray(getListPesanan))
-    // console.log(idArray); // Output: Array dari id
 
     const fetchListDetail = async (idUser: number) => {
         setAllDetailpesanan(await getAllDetailPesanan(idUser));
     };
 
-    // console.log(getAllDetailpesanan)
 
     // menghitung total kuantity pembelian
     const totalQuantity: any = Object.values(getAllDetailpesanan).reduce((acc, item: any) => {
@@ -324,7 +308,7 @@ export default function Page() {
                 {/* Pesanan yang Masuk */}
                 <section className="mt-10">
                     <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                        Pesanan yang Masuk
+                        Recent Orders
                     </h3>
                     <div className="bg-white shadow rounded-lg overflow-x-auto">
                         <table className="w-full text-left border-collapse">
@@ -334,16 +318,12 @@ export default function Page() {
                                     <th className="p-4 font-semibold text-gray-600">Date</th>
                                     <th className="p-4 font-semibold text-gray-600">Status</th>
                                     <th className="p-4 font-semibold text-gray-600">Total</th>
-                                    <th className="p-4 font-semibold text-gray-600">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {Object.values(getListPesanan)?.map(
                                     (pesanan: any, index: number) => (
-                                        <tr
-                                            key={index}
-                                            className="border-b hover:bg-gray-50"
-                                        >
+                                        <tr key={index} onClick={() => openModalDetailPesanan(pesanan.id)} className="border-b hover:bg-gray-50">
                                             <td className="p-4">#{pesanan.id}</td>
                                             <td className="p-4">
                                                 {pesanan.createdAt.toDateString().substring(4)}
@@ -351,14 +331,8 @@ export default function Page() {
                                             <td className={`p-4 ${getStatusColor(pesanan.status)}`}>
                                                 {pesanan.status}
                                             </td>
-                                            <td className="p-4">Rp. {pesanan.total.toLocaleString()}</td>
                                             <td className="p-4">
-                                                <button
-                                                    onClick={() => openModalDetailPesanan(pesanan.id)}
-                                                    className="text-blue-600 hover:text-blue-800"
-                                                >
-                                                    Atur Status
-                                                </button>
+                                                Rp. {pesanan.total.toLocaleString()}
                                             </td>
                                         </tr>
                                     )

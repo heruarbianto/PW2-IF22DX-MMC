@@ -21,6 +21,13 @@ export const getAllPesanan = async (idUserParameter:number) => {
   return pesanan;
 };
 
+// Backend: Fungsi getAllPesanan tanpa filter
+export const getAllPesananNoFilter = async () => {
+  const allPesanan = await prisma.tb_pemesanan.findMany(); // Mengambil semua data tanpa filter
+  return allPesanan;
+};
+
+
   // fungsi untuk menampilkan semua pesanan selesai
   export const getPesananSelesai = async (idUserParameter:number) => {
     // Membuat Variabel menu

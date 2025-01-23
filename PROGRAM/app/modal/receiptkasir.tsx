@@ -78,13 +78,12 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
       const result = await ubahStatusPemesanan([idPesanan]);
       console.log('Pembaruan berhasil:', result);
       alert('Status pemesanan berhasil diubah menjadi DIPROSES');
+      window.location.reload();
     } catch (error) {
       console.error('Terjadi kesalahan:', error);
       alert('Gagal mengubah status pemesanan');
     }
   };
-  // console.log(getAllDetailpesanan)
-  // console.log(getPesananByid)
   const status = Object.values(getPesananByid).map(
     (pesanan: any) => pesanan.status
   )[0];
