@@ -13,7 +13,7 @@ import {
     getAllDetailPesanan,
     getAllPesanan,
 } from "@/app/models/modelPemesanan";
-import Receipt from "@/app/modal/receipt";
+import Receipt from "@/app/modal/receiptkasir";
 
 export default function Page() {
     const [imageError, setImageError] = useState(false);
