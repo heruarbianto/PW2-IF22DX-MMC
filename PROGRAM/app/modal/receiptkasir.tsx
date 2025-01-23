@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getDetailPesananbyId, getPesananbyId } from "../models/modelPemesanan";
 import { DetailUser } from "../models/modelUser";
 import Link from "next/link";
-import { ubahStatusPemesanan } from "../models/modelStatusOrder";
+import { ubahStatusDiproses, ubahStatusSelesai } from "../models/modelStatusOrder";
 
 interface IdProps {
   idPesanan: number; // Tambahkan properti id
@@ -75,7 +75,7 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
 
   const handleButtonProses = async () => {
     try {
-      const result = await ubahStatusPemesanan([idPesanan]);
+      const result = await ubahStatusDiproses([idPesanan]);
       console.log('Pembaruan berhasil:', result);
       alert('Status pemesanan berhasil diubah menjadi DIPROSES');
       window.location.reload();
@@ -87,7 +87,7 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
 
   const handleButtonSelesai = async () => {
     try {
-      const result = await ubahStatusPemesanan([idPesanan]);
+      const result = await ubahStatusSelesai([idPesanan]);
       console.log('Pembaruan berhasil:', result);
       alert('Status pemesanan berhasil diubah menjadi SELESAI');
       window.location.reload();
