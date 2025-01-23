@@ -190,7 +190,7 @@ export const getPesananbyId = async (idPesananParameter:number) => {
         batasWaktu.setHours(batasWaktu.getHours() - 24);
     
         // Cari pesanan yang memenuhi syarat
-        const pesananYangDibatalkan = await prisma.tb_pemesanan.updateMany({
+        await prisma.tb_pemesanan.updateMany({
           where: {
             status: "MENUNGGUPEMBAYARAN",
             createdAt: {
@@ -202,9 +202,9 @@ export const getPesananbyId = async (idPesananParameter:number) => {
           },
         });
     
-        console.log(
-          `${pesananYangDibatalkan.count} pesanan telah dibatalkan secara otomatis.`
-        );
+        // console.log(
+        //   `${pesananYangDibatalkan.count} pesanan telah dibatalkan secara otomatis.`
+        // );
       } catch (error: any) {
         console.error("Gagal membatalkan pesanan secara otomatis:", error.message);
       }
