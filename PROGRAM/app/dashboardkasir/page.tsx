@@ -15,11 +15,13 @@ import {
 } from "@/app/models/modelPemesanan";
 import Receipt from "@/app/modal/receiptkasir";
 
+
 export default function Page() {
     const [imageError, setImageError] = useState(false);
     const [getIdUser, setIdUser] = useState<number>(0);
     const [getPesananId, setPesananId] = useState<number>(0);
     const [getUserId, setUserId] = useState<number>(0);
+    const [filterStatus, setFilterStatus] = useState<string | null>(null);
 
 
     const [userData, setUserData] = useState<{
@@ -212,34 +214,34 @@ export default function Page() {
                         <h3 className="text-2xl font-semibold text-gray-800 mb-6">Statistics</h3>
 
                         {/* Total Pendapatan */}
-                        <div className="bg-gray-100 text-gray-700 p-8 rounded-xl shadow-md mb-8 transform transition-transform duration-300 hover:scale-105 text-center mx-auto w-full lg:w-1/2">
+                        <div className="bg-gray-100 text-gray-700 p-8 rounded-xl shadow-md mb-8 transform transition-transform duration-300 hover:scale-105 text-center mx-auto w-full lg:w-1/2" onClick={() => setFilterStatus(null)}>
                             <p className="text-4xl font-bold">
                                 Rp. {formatNumber(totalPembelian)}
                             </p>
-                            <p className="text-sm">Pendapatan</p>
+                            <p className="text-sm" >Pendapatan</p>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             {/* Belum Bayar */}
-                            <div className="bg-blue-100 text-blue-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center">
-                                <p className="text-3xl font-bold">
+                            <div className="bg-blue-100 text-blue-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center" onClick={() => setFilterStatus("MENUNGGUPEMBAYARAN")}>
+                                <p className="text-3xl font-bold" >
                                     {Object.keys(getListPesanan).filter((key) => (getListPesanan as any)[key].status === 'MENUNGGUPEMBAYARAN').length}
                                 </p>
                                 <p className="text-sm">Belum Bayar</p>
                             </div>
-                            {/* Selesai */}
-                            <div className="bg-green-100 text-green-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center">
-                                <p className="text-3xl font-bold">
-                                    {Object.keys(getListPesanan).filter((key) => (getListPesanan as any)[key].status === 'SELESAI').length}
-                                </p>
-                                <p className="text-sm">Selesai</p>
-                            </div>
                             {/* Diproses */}
-                            <div className="bg-yellow-100 text-yellow-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center">
-                                <p className="text-3xl font-bold">
+                            <div className="bg-yellow-100 text-yellow-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center" onClick={() => setFilterStatus("DIPROSES")}>
+                                <p className="text-3xl font-bold" >
                                     {Object.keys(getListPesanan).filter((key) => (getListPesanan as any)[key].status === 'DIPROSES').length}
                                 </p>
                                 <p className="text-sm">Diproses</p>
+                            </div>
+                            {/* Selesai */}
+                            <div className="bg-green-100 text-green-700 p-6 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 text-center" onClick={() => setFilterStatus("SELESAI")}>
+                                <p className="text-3xl font-bold" >
+                                    {Object.keys(getListPesanan).filter((key) => (getListPesanan as any)[key].status === 'SELESAI').length}
+                                </p>
+                                <p className="text-sm">Selesai</p>
                             </div>
                         </div>
                     </div>
@@ -338,12 +340,19 @@ export default function Page() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.values(getListPesanan)?.map(
-                                    (pesanan: any, index: number) => (
-                                        <tr key={index} onClick={() => openModalDetailPesanan(pesanan.id)} className="border-b hover:bg-gray-50">
+                                {Object.values(getListPesanan)
+                                    ?.filter((pesanan: any) =>
+                                        filterStatus ? pesanan.status === filterStatus : true
+                                    )
+                                    .map((pesanan: any, index: number) => (
+                                        <tr
+                                            key={index}
+                                            onClick={() => openModalDetailPesanan(pesanan.id)}
+                                            className="border-b hover:bg-gray-50"
+                                        >
                                             <td className="p-4">#{pesanan.id}</td>
                                             <td className="p-4">
-                                                {pesanan.createdAt.toDateString().substring(4)}
+                                                {new Date(pesanan.createdAt).toLocaleDateString("id-ID")}
                                             </td>
                                             <td className={`p-4 ${getStatusColor(pesanan.status)}`}>
                                                 {pesanan.status}
@@ -352,8 +361,7 @@ export default function Page() {
                                                 Rp. {pesanan.total.toLocaleString()}
                                             </td>
                                         </tr>
-                                    )
-                                )}
+                                    ))}
                             </tbody>
                         </table>
                     </div>
