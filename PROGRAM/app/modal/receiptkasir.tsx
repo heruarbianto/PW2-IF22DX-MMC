@@ -48,7 +48,7 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
 
 
   useEffect(() => {
-    fetchGetDetailPesanan(); 
+    fetchGetDetailPesanan();
   }, []);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
   };
 
 
-  const handleButtonClick = async () => {
+  const handleButtonProses = async () => {
     try {
       const result = await ubahStatusPemesanan([idPesanan]);
       console.log('Pembaruan berhasil:', result);
@@ -84,6 +84,19 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
       alert('Gagal mengubah status pemesanan');
     }
   };
+
+  const handleButtonSelesai = async () => {
+    try {
+      const result = await ubahStatusPemesanan([idPesanan]);
+      console.log('Pembaruan berhasil:', result);
+      alert('Status pemesanan berhasil diubah menjadi SELESAI');
+      window.location.reload();
+    } catch (error) {
+      console.error('Terjadi kesalahan:', error);
+      alert('Gagal mengubah status pemesanan');
+    }
+  };
+
   const status = Object.values(getPesananByid).map(
     (pesanan: any) => pesanan.status
   )[0];
@@ -221,12 +234,43 @@ export default function receipt({ idPesanan, UserId, onCloseModal }: IdProps) {
               )}
             </div>
 
-            <button
-              className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600"
-              onClick={handleButtonClick}
-            >
-              Terima Pembayaran
-            </button>
+            <div className="flex justify-end mb-8">
+              {Object.values(getPesananByid)?.map((pesanan: any, index: number) => (
+                <div key={index} className="text-right">
+                  <p className="text-sm text-gray-600 mb-1">
+                    Subtotal: {pesanan.totalProduk.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-1">
+                    PPN (11%): {(pesanan.totalProduk * 0.11).toLocaleString()}
+                  </p>
+                  <p className="text-lg font-semibold text-gray-700">
+                    Total: {pesanan.total.toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Render tombol berdasarkan status */}
+            <div className="flex justify-center space-x-4">
+              {status === "MENUNGGUPEMBAYARAN" && (
+                <button
+                  className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600"
+                  onClick={handleButtonProses}
+                >
+                  Terima Pembayaran
+                </button>
+              )}
+
+              {status === "DIPROSES" && (
+                <button
+                  className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+                  onClick={handleButtonSelesai}
+                >
+                  Selesaikan Pesanan
+                </button>
+              )}
+            </div>
+
 
           </div>
 
