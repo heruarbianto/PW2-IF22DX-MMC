@@ -1,242 +1,174 @@
-"use client";
+'use client'
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faPlus, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { filterCategory, getAllMenu } from "../models/modelMenu";
-import EditMenu from "../modal/editMenu";
-import TambahMenu from "../modal/tambahMenu";
-import { useRouter } from "next/navigation";
-import {jwtDecode} from 'jwt-decode';
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from "chart.js";
+import {
+  getTotalPendapatan,
+  getLaporanHarian,
+  getLaporanMingguan,
+  getLaporanBulanan,
+  getJumlahPemesanan,
+  getDataGrafikPendapatanBulanan,
+  getDataGrafikPendapatanHarian,
+  getDataGrafikPendapatanMingguan
+} from "../models/modelLaporan";
+import { format } from "date-fns";
+// Registrasi plugin Filler
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
-export default function MainPage() {
-  
-  //  Buat Hook useState
-  const [getMenu, setMenu] = useState({});
-  const [activeTab, setActiveTab] = useState("All"); // Default active tab
-  const [isBukaModal, setBukaMOdal] = useState(false); // membuat state buka/tutup modal
-  const [isBukaModalCreate, setBukaMOdalCreate] = useState(false);
-  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null); // State untuk menyimpan ID menu
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const [AlertDataNull, setAlertDataNull] = useState(false) //state untuk menampilkan alert jika data kosong
-  
-  const openModal = (id: number) => {
-    setBukaMOdal(true);
-    setSelectedMenuId(id);
-  };
-  const openModalCreate = () => {
-    setBukaMOdalCreate(true);
-  };
-  const closeModal = () => {
-    setBukaMOdal(false);
-    setBukaMOdalCreate(false);
-  }
-  // Fungsi untuk menangani klik di luar modal (untuk menutup modal)
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    // Cek apakah klik terjadi di luar konten modal
-    if (e.target === e.currentTarget) {
-      closeModal();
-    }
+// Registering necessary Chart.js components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+interface ChartData {
+  tanggal: string;
+  pendapatan: number;
+}
+
+const Dashboard = () => {
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [dailyReport, setDailyReport] = useState(0);
+  const [weeklyReport, setWeeklyReport] = useState(0);
+  const [monthlyReport, setMonthlyReport] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [tab, setTab] = useState("daily");
+  const [data, setData] = useState<{ tanggal: string; pendapatan: number }[]>([]);
+
+  // Mengatur chartData berdasarkan tab
+  const chartDat = {
+    labels: data.map((entry) => entry.tanggal),
+    datasets: [
+      {
+        label: "Pendapatan",
+        data: data.map((entry) => entry.pendapatan),
+        borderColor: "rgba(75,192,192,1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        fill: true,
+      },
+    ],
   };
 
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab); // Set the clicked tab as active
-  };
-  // Buat Fungsi untuk respon fungsi untuk tampilka data menu
-  async function fetchAllMenu() {
-    setLoading(true);
-    // Isi nilai setValue
-    if (activeTab === "All") {
-      setMenu(await getAllMenu());
-      setLoading(false);
-    } else if (activeTab === "Makanan") {
-      setMenu(await filterCategory("Makanan"));
-      setLoading(false);
-    } else if (activeTab === "Minuman"){
-      setMenu(await filterCategory("Minuman"));
-      setLoading(false);
-    } else{
-      setMenu(await filterCategory("Soldout"));
-      setLoading(false);
-    }
-  }
-  // BBUat Hook useEffect
   useEffect(() => {
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('authToken='))
-      ?.split('=')[1];
+  const fetchData = async () => {
+    console.log("Fetching data for tab:", tab);
 
-    if (!token) {
-      router.push('/login');
+    try {
+      const profit = await getTotalPendapatan();
+      const daily = await getLaporanHarian();
+      const weekly = await getLaporanMingguan();
+      const monthly = await getLaporanBulanan();
+      const orders = await getJumlahPemesanan();
+      const monthlyDataRaw = await getDataGrafikPendapatanBulanan();
+
+      const formattedChartData = monthlyDataRaw.map((entry) => ({
+        tanggal: format(new Date(entry.tanggal), "yyyy-MM-dd"),
+        pendapatan: entry.pendapatan,
+      }));
+
+      setTotalProfit(profit);
+      setDailyReport(daily);
+      setWeeklyReport(weekly);
+      setMonthlyReport(monthly);
+      setOrderCount(orders);
+      setChartData(formattedChartData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
 
-    const decoded: { role: string; exp: number } = jwtDecode(token as string);
-    const now = Math.floor(Date.now() / 1000);
-
-    if (decoded.exp < now || !['ADMIN'].includes(decoded.role)) {
-      router.push('/forbidden');
+    let result;
+    if (tab === "daily") {
+      result = await getDataGrafikPendapatanHarian();
+    } else if (tab === "weekly") {
+      result = await getDataGrafikPendapatanMingguan();
+    } else if (tab === "monthly") {
+      result = await getDataGrafikPendapatanBulanan();
+    } else {
+      console.warn("Tab tidak valid");
+      return;
     }
-    // Panggil fungsi fetchData
-    fetchAllMenu();
 
+    console.log("Result for tab:", tab, result);
 
-    if (localStorage.getItem("Datakosong") === "true") {
-      setAlertDataNull(true);
-      localStorage.removeItem("Datakosong");
-      setTimeout(() => {
-        setAlertDataNull(false);
-      }, 3000);
+    if (result) {
+        const formattedResult = result.map((entry) => {
+            let formattedTanggal: string=""; // Tentukan tanggal sebagai string saja
+          
+            if (tab === "daily") {
+              formattedTanggal = entry.tanggal ? format(new Date(entry.tanggal), "HH:mm") : ""; // Pastikan tanggal ada
+            } else if (tab === "weekly") {
+              formattedTanggal = entry.tanggal ? format(new Date(entry.tanggal), "EEEE") : ""; // Pastikan tanggal ada
+            } else if (tab === "monthly") {
+              formattedTanggal = entry.tanggal ? format(new Date(entry.tanggal), "dd") : ""; // Pastikan tanggal ada
+            }
+          
+            // Periksa apakah formattedTanggal ada isinya
+            return {
+              tanggal: formattedTanggal || "Invalid Date", // Defaultkan ke 'Invalid Date' jika kosong
+              pendapatan: entry.pendapatan,
+            };
+          });
+          
+          setData(formattedResult);
+        }
+  };
+
+  fetchData();
+}, [tab]);
+   // fetch ulang data ketika tab berubah
+   const formatNumber = (num: number): string => {
+    if (num >= 1e12) {
+      return (num / 1e12).toFixed(1).replace(/\.0$/, '') + 't'; // Triliun
+    } else if (num >= 1e9) {
+      return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'm'; // Miliar
+    } else if (num >= 1e6) {
+      return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'jt'; // Juta
+    } else if (num >= 1e3) {
+      return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'rb'; // Ribu
     }
-  }, [activeTab, router]);
-  
+    return num.toString(); // Jika kurang dari 1000
+  };
   return (
-    <div className="px-10">
-      {AlertDataNull&&(
-        <div role="alert" className="alert alert-error mt-2.5">
-        <FontAwesomeIcon icon={faCircleExclamation}></FontAwesomeIcon>
-        <span>Error: Data Tidak Disimpan, WAJIB DIISI SEMUA!!!</span>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      {/* Top Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <p className="text-gray-600">Total Profit</p>
+          <h2 className="text-2xl font-bold">{formatNumber(totalProfit)}</h2>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <p className="text-gray-600">Daily Report</p>
+          <h2 className="text-2xl font-bold">{formatNumber(dailyReport)}</h2>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <p className="text-gray-600">Weekly Report</p>
+          <h2 className="text-2xl font-bold">{formatNumber(weeklyReport)}</h2>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <p className="text-gray-600">Monthly Report</p>
+          <h2 className="text-2xl font-bold">{formatNumber(monthlyReport)}</h2>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <p className="text-gray-600">Total Orders</p>
+          <h2 className="text-2xl font-bold">{orderCount}</h2>
+        </div>
       </div>
-      )}
-      <div className="max-w-screen-md mx-auto">
-  <div className="py-2 px-3 flex flex-col sm:flex-row justify-between items-center">
-    {/* Filter Tabs */}
-    <div className="flex flex-nowrap gap-4 mb-4 sm:mb-0 sm:flex-row overflow-x-auto whitespace-nowrap w-full">
-      <p
-        onClick={() => handleTabClick("All")}
-        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm transition-all duration-200 ease-in-out ${
-          activeTab === "All"
-            ? "border-b-blue-600 text-blue-600 font-semibold"
-            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-        }`}
-      >
-        All
-      </p>
-      <p
-        onClick={() => handleTabClick("Makanan")}
-        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-          activeTab === "Makanan"
-            ? "border-b-blue-600 text-blue-600 font-semibold"
-            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-        }`}
-      >
-        Makanan
-      </p>
-      <p
-        onClick={() => handleTabClick("Minuman")}
-        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-          activeTab === "Minuman"
-            ? "border-b-blue-600 text-blue-600 font-semibold"
-            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-        }`}
-      >
-        Minuman
-      </p>
-      <p
-        onClick={() => handleTabClick("Soldout")}
-        className={`inline-flex whitespace-nowrap border-b-2 py-2 px-3 text-sm font-medium transition-all duration-200 ease-in-out ${
-          activeTab === "Soldout"
-            ? "border-b-blue-600 text-blue-600 font-semibold"
-            : "border-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600"
-        }`}
-      >
-        Stok Habis
-      </p>
-    </div>
 
-    {/* Tambah Data Button */}
-    <button
-      onClick={openModalCreate}
-      className="btn btn-outline btn-primary"
-    >
-      <FontAwesomeIcon icon={faPlus} className="mr-2.5" />
-      Tambah Data
-    </button>
-  </div>
-</div>
-
-
-      <section className="w-fit mx-auto grid grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
-      {loading ? (
-        // Tampilkan elemen loading
-        <div className="col-span-full flex justify-center items-center">
-          <div className="flex space-x-4">
-            <span className="loading loading-ring loading-lg text-blue-600"></span>
+      {/* Chart Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h3 className="text-gray-700 font-bold mb-4">Revenue Chart</h3>
+          <div>
+            <button onClick={() => setTab("daily")}>Harian |</button>
+            <button onClick={() => setTab("weekly")}>Mingguan |</button>
+            <button onClick={() => setTab("monthly")}>Bulanan |</button>
+          </div>
+          <div className="w-full h-full">
+            <Line data={chartDat} />
           </div>
         </div>
-      ) : (<>
-        {Object.values(getMenu)?.map((datamenu: any, index: number) => (
-          <div
-            onClick={() => {
-              openModal(datamenu.id);
-            }}
-            key={index}
-            className="w-40 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
-          >
-            <img
-              src={`${datamenu.gambar_menu}`}
-              alt="Menu"
-              className="h-40 w-40 object-cover rounded-t-xl"
-            />
-            <div className="px-4 py-3 w-40">
-              <span className="text-gray-400 mr-3 uppercase text-xs">
-                {datamenu.kategori}
-              </span>
-              <p className="text-lg font-bold text-black truncate block capitalize">
-                {datamenu.nama}
-              </p>
-              <div className="flex items-center">
-                <p className="text-xs">Rp. </p>
-                <p className="text-lg font-normal text-black cursor-auto my-3">
-                  {" "}
-                  {datamenu.harga.toString()}
-                </p>
-                <p className="text-xs ml-auto">
-                {datamenu.ketersediaan}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-        </>
-      )}
-      </section>
-
-      {/* Membuat modal komponen */}
-      {isBukaModal && selectedMenuId !== null && (
-        <div
-          onClick={handleOverlayClick}
-          className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]"
-        >
-          <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6 relative">
-            <div className="flex justify-end">
-              <FontAwesomeIcon
-                icon={faXmark}
-                className="ml-auto mb-2"
-                onClick={closeModal}
-              ></FontAwesomeIcon>
-            </div>
-            <EditMenu id={selectedMenuId}></EditMenu>
-          </div>
-        </div>
-      )}
-      {isBukaModalCreate&& (
-        <div
-          onClick={handleOverlayClick}
-          className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]"
-        >
-          <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6 relative">
-            <div className="flex justify-end">
-              <FontAwesomeIcon
-                icon={faXmark}
-                className="ml-auto mb-2"
-                onClick={closeModal}
-              ></FontAwesomeIcon>
-            </div>
-            <TambahMenu></TambahMenu>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
