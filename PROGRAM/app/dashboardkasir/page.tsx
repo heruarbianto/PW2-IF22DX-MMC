@@ -22,18 +22,8 @@ export default function Page() {
     const [getIdUser, setIdUser] = useState<number>(0);
     const [getPesananId, setPesananId] = useState<number>(0);
     const [getUserId, setUserId] = useState<number>(0);
-<<<<<<< HEAD
 
     const [filterStatus, setFilterStatus] = useState<string | null>(null);
-
-
-=======
-    const [filterStatus, setFilterStatus] = useState<string | null>(null);
-
-
-
-
->>>>>>> 1dd9279aed55f3af66795db55516d5a19c5e4738
     const router =useRouter();
     const [userData, setUserData] = useState<{
         namaLengkap: string;

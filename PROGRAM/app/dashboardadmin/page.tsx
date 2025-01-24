@@ -98,7 +98,7 @@ const Dashboard = () => {
             } else if (tab === "weekly") {
               formattedTanggal = entry.tanggal ? format(new Date(entry.tanggal), "EEEE") : ""; // Pastikan tanggal ada
             } else if (tab === "monthly") {
-              formattedTanggal = entry.tanggal ? format(new Date(entry.tanggal), "dd") : ""; // Pastikan tanggal ada
+              formattedTanggal = entry.tanggal ? format(new Date(entry.tanggal), "dd-mm-yyyy") : ""; // Pastikan tanggal ada
             }
           
             // Periksa apakah formattedTanggal ada isinya
@@ -155,18 +155,48 @@ const Dashboard = () => {
 
       {/* Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-gray-700 font-bold mb-4">Revenue Chart</h3>
-          <div>
-            <button onClick={() => setTab("daily")}>Harian |</button>
-            <button onClick={() => setTab("weekly")}>Mingguan |</button>
-            <button onClick={() => setTab("monthly")}>Bulanan |</button>
-          </div>
-          <div className="w-full h-full">
-            <Line data={chartDat} />
-          </div>
-        </div>
+  <div className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-gray-800 text-lg font-bold">Revenue Chart</h3>
+      <div className="bg-gray-100 flex rounded-lg p-1">
+        <button
+          onClick={() => setTab("daily")}
+          className={`py-2 px-4 rounded-md ${
+            tab === "daily"
+              ? "bg-white shadow text-gray-800 font-semibold"
+              : "text-gray-600 hover:text-gray-800"
+          }`}
+        >
+          Day
+        </button>
+        <button
+          onClick={() => setTab("weekly")}
+          className={`py-2 px-4 rounded-md ${
+            tab === "weekly"
+              ? "bg-white shadow text-gray-800 font-semibold"
+              : "text-gray-600 hover:text-gray-800"
+          }`}
+        >
+          Week
+        </button>
+        <button
+          onClick={() => setTab("monthly")}
+          className={`py-2 px-4 rounded-md ${
+            tab === "monthly"
+              ? "bg-white shadow text-gray-800 font-semibold"
+              : "text-gray-600 hover:text-gray-800"
+          }`}
+        >
+          Month
+        </button>
       </div>
+    </div>
+    <div className="w-full h-full">
+      <Line data={chartDat} />
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };
