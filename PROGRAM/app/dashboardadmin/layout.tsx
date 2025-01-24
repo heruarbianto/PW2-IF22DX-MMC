@@ -208,8 +208,8 @@ export default function MainLayout({
           </div>
         </aside>
       </header>
-      <div className="p-4 lg:ml-64">
-        <div className="p-4 mt-14">
+      <div className="lg:ml-64">
+        <div className="mt-14">
           {/* Area content */}
           {children}
         </div>
