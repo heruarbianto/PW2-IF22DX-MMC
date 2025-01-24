@@ -14,6 +14,7 @@ import {
     getPesananHariIni,
 } from "@/app/models/modelPemesanan";
 import Receipt from "@/app/modal/receiptkasir";
+import { useRouter } from "next/navigation";
 
 
 export default function Page() {
@@ -21,9 +22,13 @@ export default function Page() {
     const [getIdUser, setIdUser] = useState<number>(0);
     const [getPesananId, setPesananId] = useState<number>(0);
     const [getUserId, setUserId] = useState<number>(0);
+<<<<<<< HEAD
     const [filterStatus, setFilterStatus] = useState<string | null>(null);
 
 
+=======
+    const router =useRouter();
+>>>>>>> 986917a4cd92a6b92fb075e4a29a9f77d5db3472
     const [userData, setUserData] = useState<{
         namaLengkap: string;
         email: string;
@@ -74,6 +79,15 @@ export default function Page() {
             token as string
         );
         setIdUser(decoded.userId);
+
+        const now = Math.floor(Date.now() / 1000);
+        if (!token) {
+          router.push("/login");
+        }
+    
+        if (decoded.exp < now || !["KASIR"].includes(decoded.role)) {
+          router.push("/forbidden");
+        }
         // Ambil detail user berdasarkan userId
         DetailUser(decoded.userId).then((data) => {
             if (data && data.length > 0) {

@@ -68,6 +68,8 @@ export default function loginUser({ toggleForm }: { toggleForm: () => void }) {
       router.push("/dashboardadmin");
     } else if (userRole === "PELANGGAN") {
       router.push("/dashboard");
+    }else if (userRole === "KASIR") {
+      router.push("/dashboardkasir");
     }
 
     if (localStorage.getItem("registerSuccess") === "true") {
