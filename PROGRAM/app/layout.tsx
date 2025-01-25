@@ -59,15 +59,6 @@ export default function MainLayout({
                   </div>
                   <div className="flex items-center lg:space-x-2">
                     <button
-                      id="myCartDropdownButton1"
-                      type="button"
-                      className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-blue-800 dark:text-blue-200"
-                    >
-                      <FontAwesomeIcon icon={faCartShopping} />
-                      <span className="hidden sm:flex m-2">My Cart</span>
-                      <FontAwesomeIcon icon={faCaretDown} />
-                    </button>
-                    <button
                       id="userDropdownButton1"
                       type="button"
                       className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-blue-800 dark:text-blue-200"
