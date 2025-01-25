@@ -8,27 +8,26 @@ export default function MainPage() {
   const steps = [
     {
       text: "Silahkan klik Order Now dan anda akan masuk ke halaman login, Jika belum punya akun silahkan daftar terlebih dahulu",
-      image: "/Step1.png", // Path ke gambar screenshot langkah 1
+      image: "/Step1.png", 
     },
     {
       text: "Setelah itu anda dapat memilih menu yang ingin anda beli dengan memasukkan nya ke keranjang terlebih dahulu",
-      image: "/Step2.png", // Path ke gambar screenshot langkah 2
+      image: "/Step2.png", 
     },
     {
       text: "Anda bisa melihat menu yang sudah ditambahkan di keranjang dengan mengklik bagian Mychart",
-      image: "/Step3.jpeg", // Path ke gambar screenshot langkah 3
+      image: "/Step3.jpeg", 
     },
     {
       text: "Lalu silahkan centang menu yang akan dicheckout dan klik tombol checkout",
-      image: "/Step4.jpg", // Path ke gambar screenshot langkah 4
+      image: "/Step4.jpg", 
     },
     {
       text: "Lalu anda bisa memilih pick up atau pesan meja di tempat, kemudian pilih metode pembayaran dan jika sudah klik pesan sekarang",
-      image: "/Step5.png", // Path ke gambar screenshot langkah 4
+      image: "/Step5.png",
     },
   ];
 
-  // Fungsi untuk melakukan scroll halus ke bagian "How To Order"
   const scrollToHowToOrder = () => {
     const howToOrderSection = document.getElementById("how-to-order");
     if (howToOrderSection) {
@@ -38,7 +37,6 @@ export default function MainPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Bagian 1: Landing Page Image dengan Overlay */}
       <div className="relative flex-grow flex items-center justify-center h-screen">
         <img
           className="absolute inset-0 w-full h-full object-cover"
@@ -70,10 +68,10 @@ export default function MainPage() {
         </div>
       </div>
 
-      {/* Bagian 2: How To Order Section */}
+    
       <div id="how-to-order" className="bg-white py-12">
         <h2 className="text-3xl font-bold text-center mb-8">
-          Cara Pesan di Tuku.yo
+          How to Order at Tuku.yo
         </h2>
         <div className="max-w-4xl mx-auto space-y-6">
           {steps.map((step, index) => (
@@ -101,7 +99,7 @@ function Step({ index, text, image }: { index: number; text: string; image: stri
   }, [controls, inView]);
 
   const variants = {
-    hidden: { opacity: 0, y: 50 }, // Animasi muncul dari bawah
+    hidden: { opacity: 0, y: 50 }, 
     visible: { opacity: 1, y: 0 },
   };
 
@@ -118,7 +116,7 @@ function Step({ index, text, image }: { index: number; text: string; image: stri
         <span className="text-blue-500 font-bold text-xl">{index + 1}.</span>
         <p className="text-gray-700 text-lg">{text}</p>
       </div>
-      {/* Gambar Screenshot dengan Animasi */}
+
       <motion.img
         src={image}
         alt={`Step ${index + 1}`}
