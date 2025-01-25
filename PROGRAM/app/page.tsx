@@ -6,10 +6,26 @@ import { useInView } from "react-intersection-observer";
 
 export default function MainPage() {
   const steps = [
-    "Silahkan klik Order Now dan Anda akan masuk ke halaman login",
-    "Jika belum punya akun silahkan daftar terlebih dahulu, setelah itu silahkan login",
-    "Setelah login anda bisa menambahkan menu menu yang akan dipesan ke dalam keranjang",
-    "Lalu silahkan klik tombol checkout dan anda akan diarahkan ke halaman pembayaran",
+    {
+      text: "Silahkan klik Order Now dan anda akan masuk ke halaman login, Jika belum punya akun silahkan daftar terlebih dahulu",
+      image: "/Step1.png", // Path ke gambar screenshot langkah 1
+    },
+    {
+      text: "Setelah itu anda dapat memilih menu yang ingin anda beli dengan memasukkan nya ke keranjang terlebih dahulu",
+      image: "/Step2.png", // Path ke gambar screenshot langkah 2
+    },
+    {
+      text: "Anda bisa melihat menu yang sudah ditambahkan di keranjang dengan mengklik bagian Mychart",
+      image: "/Step3.jpeg", // Path ke gambar screenshot langkah 3
+    },
+    {
+      text: "Lalu silahkan centang menu yang akan dicheckout dan klik tombol checkout",
+      image: "/Step4.jpg", // Path ke gambar screenshot langkah 4
+    },
+    {
+      text: "Lalu anda bisa memilih pick up atau pesan meja di tempat, kemudian pilih metode pembayaran dan jika sudah klik pesan sekarang",
+      image: "/Step5.png", // Path ke gambar screenshot langkah 4
+    },
   ];
 
   return (
@@ -50,7 +66,7 @@ export default function MainPage() {
         </h2>
         <div className="max-w-4xl mx-auto space-y-6">
           {steps.map((step, index) => (
-            <Step key={index} index={index} text={step} />
+            <Step key={index} index={index} text={step.text} image={step.image} />
           ))}
         </div>
       </div>
@@ -58,7 +74,7 @@ export default function MainPage() {
   );
 }
 
-function Step({ index, text }: { index: number; text: string }) {
+function Step({ index, text, image }: { index: number; text: string; image: string }) {
   const controls = useAnimation();
   const [ref, inView] = useInView({
     threshold: 0.2,
@@ -74,8 +90,8 @@ function Step({ index, text }: { index: number; text: string }) {
   }, [controls, inView]);
 
   const variants = {
-    hidden: { opacity: 0, x: index % 2 === 0 ? -100 : 100 },
-    visible: { opacity: 1, x: 0 },
+    hidden: { opacity: 0, y: 50 }, // Animasi muncul dari bawah
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
@@ -85,10 +101,22 @@ function Step({ index, text }: { index: number; text: string }) {
       animate={controls}
       variants={variants}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="flex items-start space-x-4"
+      className="space-y-4"
     >
-      <span className="text-blue-500 font-bold text-xl">{index + 1}.</span>
-      <p className="text-gray-700 text-lg">{text}</p>
+      <div className="flex items-start space-x-4">
+        <span className="text-blue-500 font-bold text-xl">{index + 1}.</span>
+        <p className="text-gray-700 text-lg">{text}</p>
+      </div>
+      {/* Gambar Screenshot dengan Animasi */}
+      <motion.img
+        src={image}
+        alt={`Step ${index + 1}`}
+        className="w-full max-w-2xl mx-auto rounded-lg shadow-lg"
+        initial="hidden"
+        animate={controls}
+        variants={variants}
+        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+      />
     </motion.div>
   );
 }
