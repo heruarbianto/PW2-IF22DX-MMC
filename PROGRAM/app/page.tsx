@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -28,6 +28,14 @@ export default function MainPage() {
     },
   ];
 
+  // Fungsi untuk melakukan scroll halus ke bagian "How To Order"
+  const scrollToHowToOrder = () => {
+    const howToOrderSection = document.getElementById("how-to-order");
+    if (howToOrderSection) {
+      howToOrderSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Bagian 1: Landing Page Image dengan Overlay */}
@@ -47,7 +55,10 @@ export default function MainPage() {
             order your favorites and enjoy a seamless dining experience.
           </p>
           <div className="flex gap-4">
-            <button className="px-6 py-3 bg-white text-black font-semibold rounded-md shadow-md hover:bg-gray-100">
+            <button
+              onClick={scrollToHowToOrder}
+              className="px-6 py-3 bg-white text-black font-semibold rounded-md shadow-md hover:bg-gray-100"
+            >
               How To Order
             </button>
             <Link href="/login">
@@ -60,7 +71,7 @@ export default function MainPage() {
       </div>
 
       {/* Bagian 2: How To Order Section */}
-      <div className="bg-white py-12">
+      <div id="how-to-order" className="bg-white py-12">
         <h2 className="text-3xl font-bold text-center mb-8">
           Cara Pesan di Tuku.yo
         </h2>
