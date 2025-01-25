@@ -57,17 +57,6 @@ export default function MainLayout({
                       </a>
                     </div>
                   </div>
-                  <div className="flex items-center lg:space-x-2">
-                    <button
-                      id="userDropdownButton1"
-                      type="button"
-                      className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-blue-800 dark:text-blue-200"
-                    >
-                      <FontAwesomeIcon icon={faUser} />
-                      <span className="hidden sm:flex m-2">Account</span>
-                      <FontAwesomeIcon icon={faCaretDown} />
-                    </button>
-                  </div>
                 </div>
               </div>
             </nav>
