@@ -26,9 +26,9 @@ export default function MainLayout({
   }, []);
 
   return (
-    <html lang="en" data-theme="winter">
+    <html lang="en" data-theme="winter" className="h-full">
       <body
-        className="font-sans max-h-[400px] overflow-y-auto
+        className="h-full flex flex-col font-sans overflow-y-auto
           [&::-webkit-scrollbar]:w-2
           [&::-webkit-scrollbar-track]:rounded-full
           [&::-webkit-scrollbar-track]:bg-gray-100
@@ -83,7 +83,8 @@ export default function MainLayout({
           )}
         </header>
 
-        {children}
+        {/* Konten Utama */}
+        <div className="flex-grow">{children}</div>
 
         <footer>
           {showNavbar && (
